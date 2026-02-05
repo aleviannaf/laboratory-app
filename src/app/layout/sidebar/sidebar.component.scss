@@ -1,0 +1,117 @@
+.sidebar {
+  height: 100vh;
+  background: #ffffff;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+
+  overflow: hidden;
+}
+
+/* 1) Topo coral */
+.brand {
+  background: #F5886C;
+  padding: 18px 16px;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.brand-icon {
+  font-size: 20px;
+}
+
+/* 2) Card do usuário */
+.user-card {
+  background: #1E4854; 
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.user-text {
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.user-greeting {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.nav {
+  padding: 14px 0;   
+  display: grid;
+  gap: 0;            
+  align-content: start;
+}
+ 
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+
+  padding: 12px 16px;     
+  border-radius: 0;       
+  margin: 0;             
+  width: 100%;           
+  box-sizing: border-box;
+
+  text-decoration: none;
+  color: #6B7D87;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.nav-icon {
+  width: 26px;
+  text-align: center;
+}
+
+.nav-item:hover {
+  background: rgba(245, 136, 108, 0.08);
+}
+
+.nav-item.active {
+  background: #F5886C;
+  color: #ffffff;
+  font-weight: 800;
+  border-radius: 0;   
+}
+
+
+.footer {
+  padding: 18px 16px;
+  text-align: center;
+  color: #889FAC;
+  font-size: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.footer-link {
+  margin-bottom: 6px;
+}
+
+.footer-muted {
+  color: #889FAC;
+}
