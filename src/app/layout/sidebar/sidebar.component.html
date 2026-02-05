@@ -1,0 +1,40 @@
+<aside class="sidebar">
+  <!-- 1) TOPO / BRAND -->
+  <header class="brand">
+    <div class="brand-row">
+      <span class="brand-icon">🫀</span>
+      <span class="brand-name">Laboratory</span>
+    </div>
+  </header>
+
+  <!-- 2) CARD DO USUÁRIO -->
+  <section class="user-card">
+    <div class="avatar"></div>
+
+    <div class="user-text">
+      <div class="user-greeting">Boa tarde</div>
+      <div class="user-name">Dr. Ricardo</div>
+    </div>
+  </section>
+
+  <!-- 3) MENU -->
+  <nav class="nav">
+    @for (item of items; track item.path) {
+      <a
+        class="nav-item"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+      >
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- 4) RODAPÉ -->
+  <footer class="footer">
+    <div class="footer-link">Política de Privacidade</div>
+    <div class="footer-muted">Versão: 1.0.0.1 - © 2026</div>
+  </footer>
+</aside>
