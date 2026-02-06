@@ -1,0 +1,96 @@
+.topbar {
+  height: 56px;
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 28px;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* =======================
+   Área de busca (esquerda)
+   ======================= */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #f1f5f9;
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  width: min(520px, 60vw);
+}
+
+.search-icon {
+  font-size: 14px;
+  opacity: 0.55;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+
+  font-size: 14px;
+  color: #1e4854;
+  width: 100%;
+}
+
+/* =======================
+   Área direita (ações)
+   ======================= */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Botão de ícone (sino) */
+.icon-button {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 999px;
+  border: none;
+  background: #f1f5f9;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.icon-button:hover {
+  background: #e8eef5;
+}
+
+/* =======================
+   Status do sistema
+   ======================= */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 12px;
+  color: #6b7d87; /* label mais discreto */
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.status-text strong {
+  color: #1e4854; /* valor mais forte */
+  font-weight: 700;
+}

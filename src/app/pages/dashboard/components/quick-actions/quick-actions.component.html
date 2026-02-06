@@ -1,0 +1,10 @@
+<section class="grid">
+  @for (action of actions; track action.title) {
+    <app-action-card
+      [title]="action.title"
+      [description]="action.description"
+      [icon]="action.icon"
+      [variant]="action.variant ?? 'default'"
+    />
+  }
+</section>

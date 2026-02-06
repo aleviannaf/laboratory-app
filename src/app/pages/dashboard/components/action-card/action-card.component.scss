@@ -1,0 +1,81 @@
+.card {
+  width: 100%;
+  min-height: 150px;
+
+  border: none;
+  cursor: pointer;
+  text-align: left;
+
+  /* ✅ AQUI é a mudança principal: card vertical */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: 22px;
+  border-radius: 18px;
+
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.card:hover {
+  box-shadow:
+    0 0 0 1px rgba(245, 136, 108, 0.28),
+    0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+/* Card coral */
+.card.primary {
+  background: #F5886C;
+  color: #ffffff;
+
+  box-shadow:
+    0 0 0 1px rgba(245, 136, 108, 0.10),
+    0 16px 30px rgba(245, 136, 108, 0.18);
+}
+
+/* Badge do ícone (top-left) */
+.icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(245, 136, 108, 0.14);
+  font-size: 22px;
+}
+
+.card.primary .icon {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ✅ Texto fica embaixo, com respiro */
+.text {
+  margin-top: 18px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e4854;
+}
+
+.card.primary .title {
+  color: #ffffff;
+}
+
+.description {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.25;
+  color: #6b7d87;
+}
+
+.card.primary .description {
+  color: rgba(255, 255, 255, 0.88);
+}
