@@ -1,0 +1,40 @@
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e4854;
+}
+
+.subtitle {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: #6b7d87;
+}
+
+.primary-button {
+  border: none;
+  background: #ffffff;
+  color: #F5886C;
+
+  padding: 10px 18px;
+  border-radius: 999px;
+
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+
+  cursor: pointer;
+
+  box-shadow: 0 0 0 1px rgba(245, 136, 108, 0.35);
+}
+
+.primary-button:hover {
+  box-shadow: 0 0 0 1px rgba(245, 136, 108, 0.55);
+}
