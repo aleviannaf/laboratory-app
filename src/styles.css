@@ -21,3 +21,30 @@ html, body {
 h1, h2, h3 {
   letter-spacing: -0.01em;
 }
+
+
+
+/* ============================= */
+/* BACKDROP — FUNDO COM BLUR     */
+/* ============================= */
+.app-dialog-backdrop {
+  background: rgba(0, 0, 0, 0.45); /* escurece o fundo */
+  backdrop-filter: blur(6px);      /* desfoca o conteúdo atrás */
+  -webkit-backdrop-filter: blur(6px); /* suporte Safari */
+}
+
+/* ============================= */
+/* PAINEL — MODAL FLUTUANTE      */
+/* ============================= */
+.app-dialog-panel .cdk-dialog-container {
+  padding: 0;                /* remove padding padrão do CDK */
+  border-radius: 16px;       /* bordas suaves (igual mock) */
+  overflow: hidden;          /* header arredondado não vaza */
+  background: transparent;   /* deixa o .dialog mandar no branco */
+
+  /* sombra que dá sensação de profundidade */
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.25),
+    0 8px 20px rgba(0, 0, 0, 0.15);
+}
+

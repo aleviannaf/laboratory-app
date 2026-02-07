@@ -1,4 +1,9 @@
-<button class="card" type="button" [class.primary]="variant === 'primary'">
+<button
+  class="card"
+  type="button"
+  [class.primary]="variant === 'primary'"
+  (click)="onClick()"
+>
   <div class="icon">{{ icon }}</div>
 
   <div class="text">
@@ -6,3 +11,4 @@
     <div class="description">{{ description }}</div>
   </div>
 </button>
+

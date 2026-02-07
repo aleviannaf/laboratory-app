@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, EventEmitter,  Output  } from '@angular/core';
 
 @Component({
   selector: 'app-action-card',
@@ -12,4 +12,10 @@ export class ActionCardComponent {
   @Input({ required: true }) icon!: string;
 
   @Input() variant: 'primary' | 'default' = 'default';
+
+  @Output() actionClick = new EventEmitter<void>();
+
+  onClick(): void {
+    this.actionClick.emit();
+  }
 }
