@@ -5,6 +5,10 @@
       [description]="action.description"
       [icon]="action.icon"
       [variant]="action.variant ?? 'default'"
+      (actionClick)="onActionClick(action)"
     />
   }
 </section>
+
+
+

@@ -1,0 +1,68 @@
+<!-- patient-create-dialog.component.html -->
+
+<div class="dialog">
+  <header class="dialog__header">
+    <div class="dialog__title">
+      <span class="dialog__titleIcon" aria-hidden="true">
+        <!-- ícone simples (pode trocar por SVG depois) -->
+        👤➕
+      </span>
+      <h2 class="dialog__titleText">Novo Cadastro de Paciente</h2>
+    </div>
+
+    <button type="button" class="iconBtn" (click)="close()" aria-label="Fechar modal">
+      ✕
+    </button>
+  </header>
+
+  <section class="dialog__body">
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field col-12">
+        <label for="fullName">NOME COMPLETO</label>
+        <input id="fullName" type="text" formControlName="fullName" placeholder="Ex: João Silva Santos" autocomplete="name" />
+      </div>
+
+      <div class="field col-6">
+        <label for="cpf">CPF</label>
+        <input id="cpf" type="text" formControlName="cpf" placeholder="000.000.000-00" autocomplete="off" inputmode="numeric" />
+      </div>
+
+      <div class="field col-6">
+        <label for="birthDate">NASCIMENTO</label>
+        <input id="birthDate" type="text" formControlName="birthDate" placeholder="dd/mm/aaaa" autocomplete="bday" />
+      </div>
+
+      <div class="field col-6">
+        <label for="phone">TELEFONE / WHATSAPP</label>
+        <div class="inputWithIcon">
+          <span class="leftIcon" aria-hidden="true">📞</span>
+          <input id="phone" type="text" formControlName="phone" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel" />
+        </div>
+      </div>
+
+      <div class="field col-6">
+        <label for="email">E-MAIL</label>
+        <input id="email" type="email" formControlName="email" placeholder="paciente@exemplo.com" autocomplete="email" />
+      </div>
+
+      <div class="field col-12">
+        <label for="address">ENDEREÇO COMPLETO</label>
+        <div class="inputWithIcon">
+          <span class="leftIcon" aria-hidden="true">📍</span>
+          <input id="address" type="text" formControlName="address" placeholder="Rua, Número, Bairro, Cidade" autocomplete="street-address" />
+        </div>
+      </div>
+
+      <footer class="dialog__footer">
+        <button type="button" class="btn btn--ghost" (click)="close()">
+          CANCELAR
+        </button>
+
+        <button type="submit" class="btn btn--primary" [disabled]="form.invalid">
+          <span aria-hidden="true">🧾</span>
+          FINALIZAR CADASTRO
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>
