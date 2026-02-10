@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ActionCardComponent } from '../action-card/action-card.component';
 import { Dialog } from '@angular/cdk/dialog';
 
+import { PatientsApiService, CreatePatientInput } from '../../../../core/services/patients-api.service';
+
 import { PatientCreateDialogComponent } from '../../../../shared/ui/modal-patient/patient-create-dialog.component'
 import { PatientCreateDialogResult } from '../../../../shared/ui/modal-patient/patient-create-dialog.types';
 
@@ -21,6 +23,8 @@ type QuickAction = {
 })
 export class QuickActionsComponent {
   private readonly dialog = inject(Dialog);
+  private readonly patientsApi = inject(PatientsApiService);
+
   actions: QuickAction[] = [
     {
       title: 'Criar Paciente',
@@ -46,28 +50,42 @@ export class QuickActionsComponent {
     if (action.title !== 'Criar Paciente') return;
 
     const ref = this.dialog.open<PatientCreateDialogResult>(PatientCreateDialogComponent, {
-      // opcional: passar preset
       data: { preset: {} },
-      // opcional: fechar ao clicar fora
-      // disableClose: true,
-
-
-
-      // 1) Classe do fundo escuro atrás do modal
       backdropClass: 'app-dialog-backdrop',
-
-      // 2) Classe do “painel” do modal (a caixa que flutua)
       panelClass: 'app-dialog-panel',
     });
 
-    ref.closed.subscribe((result) => {
+    ref.closed.subscribe(async (result) => {
       if (!result || result.type === 'cancel') return;
 
-      // aqui você recebe os dados do form:
-      console.log('payload', result.payload);
+      // depois chamar service/repository para salvar etc.
+      try {
+          const input: CreatePatientInput = {
+          full_name: result.payload.fullName,
+          birth_date: result.payload.birthDate,
+          sex: 'N/A',          // 🔧 TEMPORÁRIO – só para teste
+          phone: result.payload.phone,
+          address: result.payload.address,
+        };
 
-      // depois você chama seu service/repository para salvar etc.
+        const created = await this.patientsApi.createPatient(input);
+
+        console.log('Paciente criado:', created);
+
+        // aqui você pode:
+        // - emitir evento para atualizar lista
+        // - mostrar toast/snackbar
+        // - navegar para tela do paciente
+      }catch (e: any) {
+        // No Rust (Step 10) seu command está retornando erro como String (Debug do AppError)
+        const msg = typeof e === 'string' ? e : (e?.message ?? 'Erro inesperado ao criar paciente');
+        console.error(msg, e);
+        // opcional: mostrar toast
+      }
     });
+
+
+    
   }
 }
 

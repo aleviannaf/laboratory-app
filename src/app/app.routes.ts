@@ -12,14 +12,14 @@ export const routes: Routes = [
           import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
       },
       {
-        path: 'pacientes',
-        loadComponent: () =>
-          import('./pages/pacientes/pacientes.component').then(m => m.PacientesComponent),
-      },
-      {
         path: 'exames',
         loadComponent: () =>
           import('./pages/exames/exames.component').then(m => m.ExamesComponent),
+      },
+        {
+        path: 'patients',
+        loadChildren: () =>
+          import('./pages/patient/patient.routes').then((m) => m.PATIENT_ROUTES),
       },
       {
         path: 'configuracoes',

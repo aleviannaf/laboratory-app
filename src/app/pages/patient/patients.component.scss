@@ -1,0 +1,69 @@
+/* .patients-page {
+  max-width: 1240px;
+  margin: 0 auto;
+
+  //padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+ */
+/* garante que o conteúdo não “estoure” no layout do shell */
+/* :host {
+  display: block;
+  width: 100%;
+}
+
+
+.state-message {
+  padding: 16px;
+  font-size: 14px;
+  color: #24324a;
+}
+
+.state-message.error {
+  color: #d14343;
+} */
+
+
+
+.patients-page {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* garante que o conteúdo não “estoure” no layout do shell */
+:host {
+  display: block;
+  width: 100%;
+}
+
+.state-card {
+  background: #ffffff;
+  border: 1px solid #e7eef7;
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+.state-title {
+  margin: 0;
+  font-weight: 800;
+  color: #24324a;
+}
+
+.state-subtitle {
+  margin: 6px 0 0;
+  color: #8b9bb3;
+  font-size: 13px;
+}
+
+.state-card.error {
+  border-color: rgba(209, 67, 67, 0.35);
+}
+
+.state-card.error .state-title {
+  color: #d14343;
+}

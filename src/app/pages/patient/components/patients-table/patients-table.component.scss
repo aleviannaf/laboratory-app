@@ -1,0 +1,97 @@
+.table-card {
+  background: #ffffff;
+  border: 1px solid #e7eef7;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Cabeçalho da tabela (faixa cinza clara) */
+.table-head {
+  display: grid;
+  grid-template-columns: 1fr 220px 140px;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 18px;
+  background: #f7faff;
+  border-bottom: 1px solid #eef4fd;
+
+  span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #8b9bb3;
+  }
+}
+
+.table-body {
+  display: block;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 220px 140px;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid #f0f5ff;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.cell-name {
+  font-weight: 800;
+  color: #24324a;
+}
+
+.cell-doc {
+  font-size: 11px;
+  color: #8b9bb3;
+}
+
+.action-link {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #f07a63; /* DETALHES em laranja */
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Responsivo: em telas menores, empilha “Documento” e “Ações” */
+@media (max-width: 860px) {
+  .table-head,
+  .table-row {
+    grid-template-columns: 1fr 160px 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .table-head {
+    display: none; /* no design não é crucial em mobile */
+  }
+
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cell-doc {
+    order: 2;
+  }
+
+  .action-link {
+    order: 3;
+    justify-self: flex-start;
+  }
+}

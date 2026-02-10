@@ -1,0 +1,20 @@
+<div class="table-card">
+  <div class="table-head">
+    <span>PACIENTE</span>
+    <span>DOCUMENTO</span>
+    <span>AÇÕES</span>
+  </div>
+
+  <div class="table-body">
+    @for (p of patients; track p.id) {
+      <div class="table-row">
+        <strong class="cell-name">{{ p.name }}</strong>
+        <span class="cell-doc">{{ p.document }}</span>
+
+        <button type="button" class="action-link" (click)="onDetailsClick(p.id)">
+          DETALHES
+        </button>
+      </div>
+    }
+  </div>
+</div>

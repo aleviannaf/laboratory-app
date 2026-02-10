@@ -1,0 +1,38 @@
+<section class="patients-page">
+  <app-patients-header (createClick)="onCreateClick()" />
+
+  <app-patients-filters (filterChange)="onFilterChange($event)" />
+
+  @if (loadingList()) {
+    <div class="state-card">
+      <p class="state-title">Carregando pacientes...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="state-card error">
+      <p class="state-title">{{ error() }}</p>
+    </div>
+  }
+
+  @if (showEmpty()) {
+    <div class="state-card">
+      <p class="state-title">Nenhum paciente cadastrado.</p>
+      <p class="state-subtitle">Clique em “Novo Paciente” para começar.</p>
+    </div>
+  }
+
+  @if (showNoResult()) {
+    <div class="state-card">
+      <p class="state-title">Nenhum resultado encontrado.</p>
+      <p class="state-subtitle">Tente ajustar o filtro.</p>
+    </div>
+  }
+
+  @if (showTable()) {
+    <app-patients-table
+      [patients]="patients()"
+      (detailsClick)="onDetailsClick($event)"
+    />
+  }
+</section>
