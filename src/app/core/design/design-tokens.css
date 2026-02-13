@@ -1,0 +1,60 @@
+:root {
+  /* Font family */
+  --font-family-base: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Typography scale */
+  --font-size-page-title: 32px;
+  --font-size-page-subtitle: 14px;
+  --font-size-card-title: 18px;
+  --font-size-card-body: 13px;
+  --font-size-body-md: 16px;
+  --font-size-body-lg: 17px;
+  --font-size-dialog-title: 24px;
+  --font-size-input: 13px;
+  --font-size-label-xs: 10px;
+  --font-size-label-sm: 12px;
+  --font-size-button-sm: 12px;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.25;
+  --letter-spacing-heading: -0.01em;
+  --letter-spacing-label: 0.5px;
+  --letter-spacing-button: 0.02em;
+
+  /* Core colors */
+  --color-text-primary: #1e4854;
+  --color-text-strong: #24324a;
+  --color-text-muted: #6b7d87;
+  --color-text-soft: #8b9bb3;
+  --color-text-subtle: #8ea0bf;
+  --color-text-placeholder: #9aa8bf;
+
+  /* Surfaces */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7faff;
+  --color-background-app: #f7fafc;
+  --color-border-soft: #e7eef7;
+  --color-border-muted: #d6e0ef;
+  --color-surface-muted: #f2f5fa;
+  --color-surface-soft: #eef3fa;
+
+  /* Accent and feedback */
+  --color-accent: #f08a74;
+  --color-danger: #d14343;
+  --color-success: #0ab786;
+  --color-warning: #f08a34;
+
+  /* Radius */
+  --radius-pill: 999px;
+  --radius-card-md: 14px;
+  --radius-card-lg: 18px;
+  --radius-control: 12px;
+}

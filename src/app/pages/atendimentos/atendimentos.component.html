@@ -1,0 +1,35 @@
+<section class="atendimentos-page">
+  <app-atendimentos-header
+    [selectedTab]="selectedTab()"
+    [selectedDateLabel]="selectedDateLabel()"
+    [scheduledCount]="counts().scheduled"
+    [completedCount]="counts().completed"
+    (tabChange)="onTabChange($event)"
+  />
+
+  <app-atendimentos-filters
+    [query]="query()"
+    (queryChange)="onQueryChange($event)"
+    (otherDatesClick)="onOtherDatesClick()"
+  />
+
+  <section class="list-slot">
+    @if (filteredItems().length > 0) {
+      <app-atendimentos-table
+        [items]="filteredItems()"
+        [tab]="selectedTab()"
+        (completeClick)="onCompleteClick($event)"
+        (viewClick)="onViewClick($event)"
+      />
+    } @else {
+      <app-atendimentos-empty-state
+        [title]="emptyTitle()"
+        [subtitle]="emptySubtitle()"
+      />
+    }
+  </section>
+
+  <button type="button" class="fab" aria-label="Novo atendimento" (click)="onFabClick()">
+    <span>👜</span>
+  </button>
+</section>

@@ -1,17 +1,23 @@
 .shell {
   display: grid;
   grid-template-columns: 270px 1fr;
-  min-height: 100vh;
+  height: 100vh;
   background: #f7fafc;
+  overflow: hidden;
 }
 
 .main {
   display: grid;
   grid-template-rows: 56px 1fr; /* combina com a topbar */
   min-width: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .content {
   padding: 28px;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
 }

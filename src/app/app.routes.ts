@@ -16,6 +16,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/exames/exames.component').then(m => m.ExamesComponent),
       },
+      {
+        path: 'atendimentos',
+        loadComponent: () =>
+          import('./pages/atendimentos/atendimentos.component').then(
+            (m) => m.AtendimentosComponent
+          ),
+      },
         {
         path: 'patients',
         loadChildren: () =>

@@ -1,0 +1,65 @@
+<section class="table-card">
+  <header class="table-head">
+    <span>STATUS</span>
+    <span>PACIENTE / DOCUMENTO</span>
+    <span>EXAMES</span>
+    <span>URGENCIA</span>
+    <span>ACOES</span>
+  </header>
+
+  <div class="table-body">
+    @for (item of items; track item.id) {
+      <article class="table-row">
+        <div
+          class="cell status"
+          [class.status-waiting]="item.status === 'waiting'"
+          [class.status-done]="item.status === 'done'"
+        >
+          <span class="dot"></span>
+          <strong>{{ statusLabel(item) }}</strong>
+        </div>
+
+        <div class="cell patient">
+          <p class="name">{{ item.patientName }}</p>
+          <p class="protocol">PROTOCOLO: {{ item.protocol }}</p>
+        </div>
+
+        <div class="cell exams">
+          @for (exam of item.exams; track exam) {
+            <span class="exam-pill">{{ exam }}</span>
+          }
+        </div>
+
+        <div class="cell urgency">
+          <strong
+            [class.urgency-normal]="item.urgency === 'normal'"
+            [class.urgency-urgent]="item.urgency === 'urgent'"
+            [class.urgency-emergency]="item.urgency === 'emergency'"
+            >{{ urgencyLabel(item) }}</strong
+          >
+        </div>
+
+        <div class="cell actions">
+          @if (tab === 'scheduled') {
+            <button
+              type="button"
+              class="action-btn complete"
+              aria-label="Concluir atendimento"
+              (click)="onCompleteClick(item.id)"
+            >
+              ✓
+            </button>
+          }
+          <button
+            type="button"
+            class="action-btn view"
+            aria-label="Ver detalhes"
+            (click)="onViewClick(item.id)"
+          >
+            👁
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+</section>

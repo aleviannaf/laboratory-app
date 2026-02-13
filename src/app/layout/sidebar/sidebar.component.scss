@@ -1,5 +1,7 @@
 .sidebar {
   height: 100vh;
+  position: sticky;
+  top: 0;
   background: #ffffff;
   display: grid;
   grid-template-rows: auto auto 1fr auto;

@@ -1,0 +1,30 @@
+.dialog {
+  width: min(520px, 92vw);
+  border-radius: var(--radius-card-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-muted);
+  padding: 20px;
+}
+
+h2 {
+  margin: 0;
+  font-size: var(--font-size-dialog-title);
+  color: var(--color-text-primary);
+}
+
+p {
+  margin: 12px 0 0;
+  color: var(--color-text-soft);
+  font-size: var(--font-size-body-md);
+}
+
+.btn {
+  margin-top: 16px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--color-accent);
+  color: var(--color-surface);
+  padding: 10px 14px;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}

@@ -1,0 +1,19 @@
+.state-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-muted);
+  border-radius: var(--radius-card-lg);
+  padding: 18px;
+}
+
+.state-title {
+  margin: 0;
+  font-size: var(--font-size-card-title);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-strong);
+}
+
+.state-subtitle {
+  margin: 8px 0 0;
+  font-size: var(--font-size-card-body);
+  color: var(--color-text-soft);
+}

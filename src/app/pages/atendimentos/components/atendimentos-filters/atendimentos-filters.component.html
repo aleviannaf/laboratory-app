@@ -1,0 +1,17 @@
+<section class="filters-card">
+  <div class="search-field">
+    <span class="search-icon">⌕</span>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Pesquisar por paciente ou protocolo..."
+      [value]="query"
+      (input)="onInput($event)"
+    />
+  </div>
+
+  <button type="button" class="date-btn" (click)="onOtherDatesClick()">
+    <span class="icon">⌯</span>
+    OUTRAS DATAS
+  </button>
+</section>

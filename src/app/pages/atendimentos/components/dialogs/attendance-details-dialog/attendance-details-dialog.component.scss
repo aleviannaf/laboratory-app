@@ -1,0 +1,71 @@
+.dialog {
+  width: min(680px, 94vw);
+  border-radius: var(--radius-card-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-muted);
+  padding: 18px;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: var(--font-size-dialog-title);
+  color: var(--color-text-primary);
+}
+
+.close-btn {
+  border: 0;
+  background: var(--color-surface-soft);
+  color: var(--color-text-soft);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dialog-body {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 12px;
+}
+
+.line span {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-page-subtitle);
+}
+
+.line strong {
+  color: var(--color-text-strong);
+  font-size: var(--font-size-card-body);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border-muted);
+  background: var(--color-surface-alt);
+  color: var(--color-text-soft);
+  font-weight: var(--font-weight-extrabold);
+  font-size: var(--font-size-label-sm);
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin-right: 6px;
+}
+
+@media (max-width: 760px) {
+  .line {
+    grid-template-columns: 1fr;
+  }
+}

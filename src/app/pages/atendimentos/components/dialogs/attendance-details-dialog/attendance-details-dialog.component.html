@@ -1,0 +1,43 @@
+<section class="dialog">
+  <header class="dialog-header">
+    <h2>Detalhes do atendimento</h2>
+    <button type="button" class="close-btn" (click)="close()" aria-label="Fechar">✕</button>
+  </header>
+
+  <div class="dialog-body">
+    <div class="line">
+      <span>Paciente</span>
+      <strong>{{ data.item.patientName }}</strong>
+    </div>
+    <div class="line">
+      <span>Protocolo</span>
+      <strong>{{ data.item.protocol }}</strong>
+    </div>
+    <div class="line">
+      <span>Status</span>
+      <strong>{{ data.item.status === 'waiting' ? 'AGUARDANDO' : 'REALIZADO' }}</strong>
+    </div>
+    <div class="line">
+      <span>Urgencia</span>
+      <strong>{{ data.item.urgency.toUpperCase() }}</strong>
+    </div>
+    <div class="line">
+      <span>Agendado em</span>
+      <strong>{{ data.item.scheduledAt }}</strong>
+    </div>
+    @if (data.item.completedAt) {
+      <div class="line">
+        <span>Concluido em</span>
+        <strong>{{ data.item.completedAt }}</strong>
+      </div>
+    }
+    <div class="line exams">
+      <span>Exames</span>
+      <div>
+        @for (exam of data.item.exams; track exam) {
+          <span class="pill">{{ exam }}</span>
+        }
+      </div>
+    </div>
+  </div>
+</section>

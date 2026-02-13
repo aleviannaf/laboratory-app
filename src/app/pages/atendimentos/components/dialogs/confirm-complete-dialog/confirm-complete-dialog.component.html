@@ -1,0 +1,17 @@
+<section class="dialog">
+  <header class="dialog-header">
+    <h2>Concluir atendimento</h2>
+  </header>
+
+  <div class="dialog-body">
+    <p>
+      Confirmar conclusao do atendimento de <strong>{{ data.patientName }}</strong>?
+    </p>
+    <p class="muted">Protocolo: {{ data.protocol }}</p>
+  </div>
+
+  <footer class="dialog-footer">
+    <button type="button" class="btn ghost" (click)="cancel()">Cancelar</button>
+    <button type="button" class="btn primary" (click)="confirm()">Concluir</button>
+  </footer>
+</section>

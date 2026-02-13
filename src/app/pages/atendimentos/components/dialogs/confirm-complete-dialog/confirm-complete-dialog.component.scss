@@ -1,0 +1,53 @@
+.dialog {
+  width: min(560px, 92vw);
+  border-radius: var(--radius-card-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-muted);
+  padding: 18px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: var(--font-size-dialog-title);
+  color: var(--color-text-primary);
+}
+
+.dialog-body {
+  margin-top: 12px;
+}
+
+.dialog-body p {
+  margin: 0;
+  font-size: var(--font-size-body-md);
+  color: var(--color-text-strong);
+}
+
+.dialog-body .muted {
+  margin-top: 6px;
+  color: var(--color-text-subtle);
+}
+
+.dialog-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  border: 0;
+  border-radius: var(--radius-control);
+  padding: 10px 14px;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.btn.ghost {
+  background: var(--color-surface-soft);
+  color: var(--color-text-soft);
+}
+
+.btn.primary {
+  background: var(--color-accent);
+  color: var(--color-surface);
+}

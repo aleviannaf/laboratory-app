@@ -1,0 +1,13 @@
+<section class="dialog">
+  <h2>Filtrar por data</h2>
+
+  <label class="field">
+    <span>Data</span>
+    <input type="date" [value]="date()" (input)="onInput($event)" />
+  </label>
+
+  <footer class="footer">
+    <button type="button" class="btn ghost" (click)="cancel()">Cancelar</button>
+    <button type="button" class="btn primary" (click)="apply()">Aplicar</button>
+  </footer>
+</section>

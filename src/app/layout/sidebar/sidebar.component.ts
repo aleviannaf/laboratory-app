@@ -13,6 +13,7 @@ type NavItem = { label: string; path: string; icon: string; exact?: boolean };
 export class SidebarComponent {
   items: NavItem[] = [
     { label: 'Dashboard', path: '/', icon: '🏠', exact: true },
+    { label: 'Atendimentos', path: '/atendimentos', icon: '📋' },
     { label: 'Pacientes', path: '/patients', icon: '👤' },
     { label: 'Exames', path: '/exames', icon: '🧪' },
     { label: 'Configurações', path: '/configuracoes', icon: '⚙️' },
