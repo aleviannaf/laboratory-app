@@ -36,6 +36,11 @@ import {
   PatientsApiService,
 } from '../../core/services/patients-api.service';
 
+type SubmitPatientCreateDialogResult = Extract<
+  PatientCreateDialogResult,
+  { type: 'submit' }
+>;
+
 @Component({
   selector: 'app-patients',
   standalone: true,
@@ -154,8 +159,8 @@ export class PatientsComponent implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         filter(
-          (result): result is PatientCreateDialogResult =>
-            !!result && result.type !== 'cancel'
+          (result): result is SubmitPatientCreateDialogResult =>
+            !!result && result.type === 'submit'
         ),
         switchMap((result) => {
           let input: CreatePatientInput;
@@ -196,23 +201,27 @@ export class PatientsComponent implements OnInit {
 }
 
 
-function mapToCreateInput(payload: any): CreatePatientInput {
-  const full_name = String(payload?.fullName ?? '').trim();
-  if (!full_name) throw new Error('Nome é obrigatório.');
+export function mapToCreateInput(
+  result: SubmitPatientCreateDialogResult
+): CreatePatientInput {
+  const full_name = String(result.payload.fullName ?? '').trim();
+  const birth_date = String(result.payload.birthDate ?? '').trim();
+  const phone = String(result.payload.phone ?? '').trim();
+  const address = String(result.payload.address ?? '').trim();
 
- 
-  const birth_date = payload?.birthDate ?? null;
+  if (!full_name) throw new Error('Nome e obrigatorio.');
+  if (!birth_date) throw new Error('Nascimento e obrigatorio.');
+  if (!phone) throw new Error('Telefone e obrigatorio.');
+  if (!address) throw new Error('Endereco e obrigatorio.');
 
   return {
     full_name,
     birth_date,
-    // ⚠️tornar obrigatório no modal .
-    sex: payload?.sex ?? 'N/A',
-    phone: payload?.phone ?? null,
-    address: payload?.address ?? null,
+    sex: 'N/A',
+    phone,
+    address,
   };
 }
-
 function normalizeError(e: unknown): string {
   if (typeof e === 'string') return e;
   if (e && typeof e === 'object' && 'message' in e) {
