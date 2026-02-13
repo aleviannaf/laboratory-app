@@ -31,6 +31,7 @@ impl CreatePatientUseCase {
     let patient = Patient::new(
       persisted.id,
       persisted.full_name,
+      persisted.cpf,
       persisted.birth_date,
       persisted.sex,
       persisted.phone,
@@ -48,12 +49,16 @@ fn validate_create_input(input: &CreatePatientInput) -> Result<(), AppError> {
   if input.full_name.trim().is_empty() {
     return Err(AppError::Validation("full_name is required".into()));
   }
+  if input.cpf.trim().is_empty() {
+    return Err(AppError::Validation("cpf is required".into()));
+  }
   Ok(())
 }
 
 fn map_domain_error(err: PatientDomainError) -> AppError {
   match err {
     PatientDomainError::FullNameRequired => AppError::Validation("full_name is required".into()),
+    PatientDomainError::CpfRequired => AppError::Validation("cpf is required".into()),
   }
 }
 
@@ -71,6 +76,7 @@ fn to_view(p: Patient) -> PatientView {
   PatientView {
     id: p.id,
     full_name: p.full_name,
+    cpf: p.cpf,
     birth_date: p.birth_date,
     sex: p.sex,
     phone: p.phone,

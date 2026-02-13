@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreatePatientInput {
   pub full_name: String,
+  pub cpf: String,
   pub birth_date: String,
   pub sex: String,
   pub phone: String,
@@ -13,6 +14,7 @@ pub struct CreatePatientInput {
 pub struct PatientView {
   pub id: String,
   pub full_name: String,
+  pub cpf: String,
   pub birth_date: String,
   pub sex: String,
   pub phone: String,

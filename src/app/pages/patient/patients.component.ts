@@ -35,6 +35,7 @@ import {
   CreatePatientInput,
   PatientsApiService,
 } from '../../core/services/patients-api.service';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 type SubmitPatientCreateDialogResult = Extract<
   PatientCreateDialogResult,
@@ -58,6 +59,7 @@ export class PatientsComponent implements OnInit {
   // dependências
   private readonly patientService = inject(PatientService);
   private readonly patientsApi = inject(PatientsApiService);
+  private readonly toast = inject(ToastService);
   private readonly dialog = inject(Dialog);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -168,7 +170,7 @@ export class PatientsComponent implements OnInit {
             input = mapToCreateInput(result);
           } catch (e) {
             const msg = normalizeError(e);
-            this.error.set(msg);
+            this.toast.error(msg);
             return EMPTY;
           }
 
@@ -178,8 +180,8 @@ export class PatientsComponent implements OnInit {
           // Tauri geralmente trabalha com Promise -> converte para Observable
           return from(this.patientsApi.createPatient(input)).pipe(
             catchError((e) => {
-              const msg = normalizeError(e);
-              this.error.set(msg);
+              const msg = mapCreatePatientError(normalizeError(e));
+              this.toast.error(msg);
               console.error('createPatient error', e);
               return EMPTY;
             }),
@@ -189,6 +191,8 @@ export class PatientsComponent implements OnInit {
       )
       .subscribe({
         next: () => {
+          this.error.set(null);
+          this.toast.success('Paciente cadastrado com sucesso.');
           // recarrega lista mantendo o filtro atual
           this.refreshList();
         },
@@ -205,17 +209,20 @@ export function mapToCreateInput(
   result: SubmitPatientCreateDialogResult
 ): CreatePatientInput {
   const full_name = String(result.payload.fullName ?? '').trim();
+  const cpf = String(result.payload.cpf ?? '').trim();
   const birth_date = String(result.payload.birthDate ?? '').trim();
   const phone = String(result.payload.phone ?? '').trim();
   const address = String(result.payload.address ?? '').trim();
 
   if (!full_name) throw new Error('Nome e obrigatorio.');
+  if (!cpf) throw new Error('CPF e obrigatorio.');
   if (!birth_date) throw new Error('Nascimento e obrigatorio.');
   if (!phone) throw new Error('Telefone e obrigatorio.');
   if (!address) throw new Error('Endereco e obrigatorio.');
 
   return {
     full_name,
+    cpf,
     birth_date,
     sex: 'N/A',
     phone,
@@ -229,4 +236,18 @@ function normalizeError(e: unknown): string {
     if (typeof m === 'string' && m.trim()) return m;
   }
   return 'Erro inesperado.';
+}
+
+function mapCreatePatientError(rawMessage: string): string {
+  const normalized = rawMessage.toLowerCase();
+  if (
+    normalized.includes('conflict while saving patient') ||
+    normalized.includes('unique constraint failed')
+  ) {
+    return 'CPF ja cadastrado.';
+  }
+  if (normalized.includes('cpf is required')) {
+    return 'CPF e obrigatorio.';
+  }
+  return rawMessage;
 }

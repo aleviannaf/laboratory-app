@@ -24,12 +24,13 @@ impl PatientRepository for PatientsSqliteRepository {
 
     let result = sqlx::query(
       r#"
-      INSERT INTO patients (full_name, birth_date, sex, phone, address)
-      VALUES (?1, ?2, ?3, ?4, ?5)
-      RETURNING id, full_name, birth_date, sex, phone, address, created_at, updated_at
+      INSERT INTO patients (full_name, cpf, birth_date, sex, phone, address, created_at, updated_at)
+      VALUES (?1, ?2, ?3, ?4, ?5, ?6, datetime('now'), datetime('now'))
+      RETURNING id, full_name, cpf, birth_date, sex, phone, address, created_at, updated_at
       "#,
     )
     .bind(&input.full_name)
+    .bind(&input.cpf)
     .bind(&input.birth_date)
     .bind(&input.sex)
     .bind(&input.phone)
@@ -47,6 +48,7 @@ impl PatientRepository for PatientsSqliteRepository {
     Ok(Patient {
       id: row.get::<String, _>("id"),
       full_name: row.get::<String, _>("full_name"),
+      cpf: row.get::<String, _>("cpf"),
       birth_date: row.get::<String, _>("birth_date"),
       sex: row.get::<String, _>("sex"),
       phone: row.get::<String, _>("phone"),
@@ -60,6 +62,9 @@ impl PatientRepository for PatientsSqliteRepository {
 fn map_sqlx_error(err: sqlx::Error) -> PatientRepositoryError {
   match err {
     sqlx::Error::RowNotFound => PatientRepositoryError::NotFound,
+    sqlx::Error::Database(db_err) if db_err.is_unique_violation() => {
+      PatientRepositoryError::Conflict
+    }
     _ => PatientRepositoryError::PersistenceError,
   }
 }

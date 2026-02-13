@@ -18,6 +18,7 @@ describe('mapToCreateInput', () => {
 
     expect(input).toEqual({
       full_name: 'Maria Souza',
+      cpf: '123.456.789-00',
       birth_date: '1990-10-01',
       sex: 'N/A',
       phone: '(11) 99999-9999',
@@ -32,6 +33,15 @@ describe('mapToCreateInput', () => {
     };
 
     expect(() => mapToCreateInput(result)).toThrowError('Nome e obrigatorio.');
+  });
+
+  it('throws when cpf is empty', () => {
+    const result = {
+      ...validSubmitResult,
+      payload: { ...validSubmitResult.payload, cpf: '   ' },
+    };
+
+    expect(() => mapToCreateInput(result)).toThrowError('CPF e obrigatorio.');
   });
 
   it('never returns null for string fields', () => {

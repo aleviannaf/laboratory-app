@@ -4,6 +4,7 @@ use super::errors::PatientDomainError;
 pub struct Patient {
   pub id: String,
   pub full_name: String,
+  pub cpf: String,
   pub birth_date: String,
   pub sex: String,
   pub phone: String,
@@ -16,6 +17,7 @@ impl Patient {
   pub fn new(
     id: String,
     full_name: String,
+    cpf: String,
     birth_date: String,
     sex: String,
     phone: String,
@@ -26,10 +28,14 @@ impl Patient {
     if full_name.trim().is_empty() {
       return Err(PatientDomainError::FullNameRequired);
     }
+    if cpf.trim().is_empty() {
+      return Err(PatientDomainError::CpfRequired);
+    }
 
     Ok(Self {
       id,
       full_name,
+      cpf,
       birth_date,
       sex,
       phone,

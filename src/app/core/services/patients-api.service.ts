@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/core';
 
 export type CreatePatientInput = {
   full_name: string;
+  cpf: string;
   birth_date: string;
   sex: string;
   phone: string;
@@ -12,6 +13,7 @@ export type CreatePatientInput = {
 export type PatientView = {
   id: string;
   full_name: string;
+  cpf: string;
   birth_date: string;
   sex: string;
   phone: string;
