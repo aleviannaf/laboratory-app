@@ -1,0 +1,13 @@
+<section class="exams-page">
+  <app-exames-header />
+
+  <app-exames-filters [query]="query()" (filterChange)="onFilterChange($event)" />
+
+  @if (hasResults()) {
+    <app-exames-catalog [sections]="sections()" />
+  } @else {
+    <app-exames-empty-state />
+  }
+
+  <button type="button" class="fab" aria-label="Novo Exame">+</button>
+</section>
