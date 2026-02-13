@@ -4,7 +4,9 @@ use sqlx::SqlitePool;
 
 use crate::{
   app::{error::AppError, state::AppState},
-  application::patients::create_patient::CreatePatientUseCase,
+  application::patients::{
+    create_patient::CreatePatientUseCase, list_patients::ListPatientsUseCase,
+  },
   infra::{
     db::sqlite::{create_sqlite_pool, run_migrations},
     repositories::patients_sqlite::PatientsSqliteRepository,
@@ -26,10 +28,12 @@ pub async fn compose(db_path: &str) -> Result<AppState, AppError> {
   let repo = Arc::new(PatientsSqliteRepository::new(pool));
 
   // 4) Use case (application)
-  let create_patient_use_case = Arc::new(CreatePatientUseCase::new(repo));
+  let create_patient_use_case = Arc::new(CreatePatientUseCase::new(repo.clone()));
+  let list_patients_use_case = Arc::new(ListPatientsUseCase::new(repo));
 
   // 5) State
   Ok(AppState {
     create_patient_use_case,
+    list_patients_use_case,
   })
 }

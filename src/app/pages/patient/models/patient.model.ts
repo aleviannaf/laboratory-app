@@ -2,5 +2,12 @@ export interface Patient {
   id: string;
   name: string;
   document: string;
-  createdAt?: string; // opcional (ISO), útil quando vier da API
+  fullName: string;
+  cpf: string;
+  birthDate: string;
+  sex: string;
+  phone: string;
+  address: string;
+  createdAt: string;
+  updatedAt: string;
 }

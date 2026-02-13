@@ -16,3 +16,15 @@ pub async fn create_patient(
     .await
     .map_err(|e| format!("{e:?}"))
 }
+
+#[tauri::command]
+pub async fn list_patients(
+  state: State<'_, AppState>,
+  query: Option<String>,
+) -> Result<Vec<PatientView>, String> {
+  state
+    .list_patients_use_case
+    .execute(query)
+    .await
+    .map_err(|e| format!("{e:?}"))
+}

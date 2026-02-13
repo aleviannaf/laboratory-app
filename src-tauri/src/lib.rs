@@ -29,7 +29,8 @@ pub fn run() {
       Ok(())
     })
     .invoke_handler(tauri::generate_handler![
-      interface::ipc::patients::create_patient
+      interface::ipc::patients::create_patient,
+      interface::ipc::patients::list_patients
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

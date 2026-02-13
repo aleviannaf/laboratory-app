@@ -13,7 +13,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, of, EMPTY, from } from 'rxjs';
 import {
   debounceTime,
-  distinctUntilChanged,
   map,
   startWith,
   switchMap,
@@ -108,7 +107,6 @@ export class PatientsComponent implements OnInit {
         startWith(this.query()),
         map((q) => q.trim()),
         debounceTime(this.debounceMs),
-        distinctUntilChanged(),
 
         tap(() => {
           this.loadingList.set(true);

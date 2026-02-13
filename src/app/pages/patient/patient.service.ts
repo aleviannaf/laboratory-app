@@ -1,27 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { map, timeout } from 'rxjs/operators';
 import { Patient } from './models/patient.model';
+import { PatientView, PatientsApiService } from '../../core/services/patients-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class PatientService {
-  private readonly mock: readonly Patient[] = [
-    { id: '1', name: 'Glenda do Carmo Martins Freire', document: '123.456.789-00' },
-    { id: '2', name: 'Danildo Mendes Gato', document: '987.654.321-11' },
-    { id: '3', name: 'Willian Batista Guerreiro', document: '456.123.789-22' },
-  ];
+  constructor(private readonly patientsApi: PatientsApiService) {}
 
   listPatients(query?: string): Observable<readonly Patient[]> {
-    const q = query?.trim().toLowerCase() ?? '';
-
-    const filtered = q
-      ? this.mock.filter((p) => {
-          const name = p.name.toLowerCase();
-          const doc = p.document.toLowerCase();
-          return name.includes(q) || doc.includes(q);
-        })
-      : this.mock;
-
-    return of(filtered).pipe(delay(400));
+    return from(this.patientsApi.listPatients(query)).pipe(
+      timeout(8000),
+      map((items) => items.map(mapPatientViewToUiModel))
+    );
   }
+}
+
+function mapPatientViewToUiModel(item: PatientView): Patient {
+  return {
+    id: item.id,
+    name: item.full_name,
+    document: item.cpf,
+    fullName: item.full_name,
+    cpf: item.cpf,
+    birthDate: item.birth_date,
+    sex: item.sex,
+    phone: item.phone,
+    address: item.address,
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
+  };
 }

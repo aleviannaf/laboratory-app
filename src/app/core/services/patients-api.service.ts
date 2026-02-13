@@ -28,4 +28,12 @@ export class PatientsApiService {
     // o nome do command deve bater com o #[tauri::command] fn create_patient
     return invoke<PatientView>('create_patient', { input });
   }
+
+  listPatients(query?: string): Promise<PatientView[]> {
+    const normalized = query?.trim();
+    if (normalized) {
+      return invoke<PatientView[]>('list_patients', { query: normalized });
+    }
+    return invoke<PatientView[]>('list_patients');
+  }
 }
