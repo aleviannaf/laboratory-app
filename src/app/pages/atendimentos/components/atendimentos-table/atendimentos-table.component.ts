@@ -23,17 +23,6 @@ export class AtendimentosTableComponent {
     this.viewClick.emit(id);
   }
 
-  urgencyLabel(item: AttendanceItem): string {
-    switch (item.urgency) {
-      case 'emergency':
-        return 'EMERGENCIA';
-      case 'urgent':
-        return 'URGENTE';
-      default:
-        return 'NORMAL';
-    }
-  }
-
   statusLabel(item: AttendanceItem): string {
     return item.status === 'waiting' ? 'AGUARDANDO' : 'REALIZADO';
   }

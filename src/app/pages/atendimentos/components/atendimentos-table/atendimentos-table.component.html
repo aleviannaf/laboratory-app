@@ -3,7 +3,6 @@
     <span>STATUS</span>
     <span>PACIENTE / DOCUMENTO</span>
     <span>EXAMES</span>
-    <span>URGENCIA</span>
     <span>ACOES</span>
   </header>
 
@@ -28,15 +27,6 @@
           @for (exam of item.exams; track exam) {
             <span class="exam-pill">{{ exam }}</span>
           }
-        </div>
-
-        <div class="cell urgency">
-          <strong
-            [class.urgency-normal]="item.urgency === 'normal'"
-            [class.urgency-urgent]="item.urgency === 'urgent'"
-            [class.urgency-emergency]="item.urgency === 'emergency'"
-            >{{ urgencyLabel(item) }}</strong
-          >
         </div>
 
         <div class="cell actions">
