@@ -1,0 +1,30 @@
+@for (section of sections; track trackSection($index, section)) {
+  <section class="catalog-section">
+    <header class="section-head">
+      <h2>{{ section.title }}</h2>
+      <span>{{ section.items.length }} ITENS</span>
+    </header>
+
+    <div class="cards">
+      @for (item of section.items; track trackItem($index, item)) {
+        <article class="exam-card">
+          <div class="card-top">
+            <span class="pill-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="pill-icon-svg">
+                <path d="M10 2v6.5l-5.5 9a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3l-5.5-9V2"></path>
+                <path d="M8 9h8"></path>
+              </svg>
+            </span>
+            <div class="meta">
+              <strong>{{ formatPrice(item.price) }}</strong>
+              <small>PRAZO: {{ item.turnaroundHours }}H</small>
+            </div>
+          </div>
+
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+        </article>
+      }
+    </div>
+  </section>
+}
