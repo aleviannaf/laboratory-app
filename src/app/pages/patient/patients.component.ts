@@ -35,6 +35,11 @@ import {
   PatientsApiService,
 } from '../../core/services/patients-api.service';
 import { ToastService } from '../../shared/ui/toast/toast.service';
+import { PatientRecordService } from './patient-record.service';
+import {
+  PatientRecordDialogComponent,
+  PatientRecordDialogData,
+} from './components/dialogs/patient-record-dialog/patient-record-dialog.component';
 
 type SubmitPatientCreateDialogResult = Extract<
   PatientCreateDialogResult,
@@ -59,6 +64,7 @@ export class PatientsComponent implements OnInit {
   private readonly patientService = inject(PatientService);
   private readonly patientsApi = inject(PatientsApiService);
   private readonly toast = inject(ToastService);
+  private readonly patientRecordService = inject(PatientRecordService);
   private readonly dialog = inject(Dialog);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -198,7 +204,29 @@ export class PatientsComponent implements OnInit {
   }
 
   onDetailsClick(patientId: string): void {
-    void patientId;
+    const patient = this.patients().find((item) => item.id === patientId);
+    if (!patient) {
+      this.toast.error('Paciente nao encontrado.');
+      return;
+    }
+
+    from(this.patientRecordService.getRecordByPatientId(patient.id))
+      .pipe(
+        catchError((error) => {
+          const message = mapPatientRecordError(normalizeError(error));
+          this.toast.error(message);
+          console.error('getPatientRecord error', error);
+          return EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((record) => {
+        this.dialog.open<void, PatientRecordDialogData>(PatientRecordDialogComponent, {
+          data: { record },
+          backdropClass: 'app-dialog-backdrop',
+          panelClass: 'app-dialog-panel',
+        });
+      });
   }
 }
 
@@ -248,4 +276,12 @@ function mapCreatePatientError(rawMessage: string): string {
     return 'CPF e obrigatorio.';
   }
   return rawMessage;
+}
+
+function mapPatientRecordError(rawMessage: string): string {
+  const normalized = rawMessage.toLowerCase();
+  if (normalized.includes('patient not found')) {
+    return 'Paciente nao encontrado.';
+  }
+  return 'Nao foi possivel carregar o prontuario.';
 }

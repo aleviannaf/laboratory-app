@@ -1,0 +1,107 @@
+<section class="record-dialog">
+  <header class="record-header">
+    <div class="identity">
+      <div class="avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2.5c-4.25 0-8 2.2-8 5v1.5h16V19.5c0-2.8-3.75-5-8-5Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+
+      <div class="identity-text">
+        <h2>{{ record().patient.fullName }}</h2>
+        <p>CPF: {{ record().patient.cpf }}</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="new-attendance-btn" (click)="onNewAttendanceClick()">
+        <span class="plus">+</span>
+        <span>Novo atendimento</span>
+      </button>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24">
+          <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="contact-grid">
+    <article class="contact-card">
+      <span class="label">Nascimento</span>
+      <strong>{{ record().patient.birthDate }}</strong>
+    </article>
+
+    <article class="contact-card">
+      <span class="label">Telefone</span>
+      <strong>{{ record().patient.phone }}</strong>
+    </article>
+
+    <article class="contact-card">
+      <span class="label">E-mail</span>
+      <strong>{{ record().email }}</strong>
+    </article>
+
+    <article class="contact-card address">
+      <span class="label">Endereco</span>
+      <strong>{{ record().patient.address }}</strong>
+    </article>
+  </section>
+
+  <section class="history">
+    <h3>Historico de atendimentos</h3>
+
+    <div class="history-scroll">
+      @for (entry of record().entries; track entry.id) {
+        <section class="entry">
+          <div class="entry-marker" aria-hidden="true"></div>
+          <div class="entry-header">
+            <span>Atendimento em</span>
+            <p>{{ entry.date }}</p>
+          </div>
+
+          <div class="exam-list">
+            @for (exam of entry.exams; track exam.id) {
+              <article class="exam-card">
+                <div class="exam-main">
+                  <div class="exam-icon" [class.done]="exam.status === 'completed'" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M12 7a5 5 0 1 0 5 5h2a7 7 0 1 1-2.05-4.95L15.5 8.5A5 5 0 0 0 12 7Zm-.8 1.6v4.1l3.2 1.8.8-1.4-2.4-1.3V8.6h-1.6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </div>
+                  <p class="exam-name">{{ exam.name }}</p>
+                  <p class="exam-meta">ID: {{ exam.id }}</p>
+                </div>
+
+                <div class="exam-actions">
+                  @if (exam.reportAvailable) {
+                    <button type="button" class="report-btn">Laudo</button>
+                  }
+
+                  <button type="button" class="icon-btn view-btn" aria-label="Visualizar exame">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  </section>
+
+  <footer class="dialog-footer">
+    <button type="button" class="footer-close-btn" (click)="close()">Fechar</button>
+  </footer>
+</section>

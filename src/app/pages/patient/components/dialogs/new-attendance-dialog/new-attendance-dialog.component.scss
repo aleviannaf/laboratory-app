@@ -1,0 +1,316 @@
+.new-attendance-dialog {
+  width: min(900px, 95vw);
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-surface);
+}
+
+.dialog-header {
+  padding: 20px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.header-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: #fff1e8;
+  color: var(--color-accent);
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.header-left h2 {
+  margin: 0;
+  text-transform: uppercase;
+  color: #3d4f67;
+  font-size: var(--font-size-card-title);
+}
+
+.header-left p {
+  margin: 2px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.close-btn {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-soft);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+}
+
+.close-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.dialog-content {
+  display: grid;
+  grid-template-columns: 1fr 336px;
+  min-height: 520px;
+}
+
+.catalog-pane {
+  padding: 18px 20px;
+  border-right: 1px solid var(--color-border-soft);
+}
+
+.search-input {
+  border: 1px solid var(--color-border-muted);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 42px;
+}
+
+.search-input svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-subtle);
+}
+
+.search-input input {
+  border: 0;
+  outline: none;
+  width: 100%;
+  font-size: var(--font-size-input);
+  color: var(--color-text-soft);
+}
+
+.catalog-scroll {
+  margin-top: 14px;
+  max-height: 420px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.catalog-section + .catalog-section {
+  margin-top: 14px;
+}
+
+.catalog-section h3 {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-label-sm);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.exam-card {
+  border: 1px solid var(--color-border-muted);
+  border-radius: 14px;
+  background: #fff;
+  min-height: 58px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.exam-card.selected {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.exam-main {
+  display: grid;
+  gap: 2px;
+}
+
+.exam-main strong {
+  font-size: var(--font-size-card-body);
+  color: var(--color-text-strong);
+}
+
+.exam-main span {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-text-subtle);
+}
+
+.exam-card.selected .exam-main strong,
+.exam-card.selected .exam-main span,
+.exam-card.selected .exam-action {
+  color: #fff;
+}
+
+.exam-action {
+  font-size: var(--font-size-body-md);
+  color: var(--color-text-subtle);
+}
+
+.summary-pane {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-pane h3 {
+  margin: 4px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-label-sm);
+}
+
+.selected-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.selected-list li {
+  border: 1px solid var(--color-border-soft);
+  border-radius: 12px;
+  min-height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  color: var(--color-text-strong);
+  font-size: var(--font-size-card-body);
+  font-weight: var(--font-weight-semibold);
+}
+
+.selected-list button {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-soft);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.date-block {
+  margin-top: 14px;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 14px;
+}
+
+.date-block h4 {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-accent);
+  font-size: var(--font-size-label-sm);
+}
+
+.date-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.today-btn,
+.schedule-btn {
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-muted);
+  text-transform: uppercase;
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-subtle);
+  background: #fff;
+}
+
+.schedule-btn {
+  border-color: #3d4f67;
+  background: #3d4f67;
+  color: #fff;
+}
+
+.date-block input[type='date'] {
+  margin-top: 8px;
+  width: 100%;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 12px;
+  height: 40px;
+  padding: 0 10px;
+  color: var(--color-text-strong);
+  font-size: var(--font-size-card-body);
+}
+
+.summary-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  text-transform: uppercase;
+}
+
+.total span {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.total strong {
+  color: var(--color-accent);
+  font-size: var(--font-size-card-title);
+}
+
+.confirm-btn {
+  margin-top: 12px;
+  width: 100%;
+  border: 0;
+  height: 44px;
+  border-radius: 14px;
+  background: #e1734f;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: var(--font-size-button-sm);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.confirm-btn:disabled {
+  opacity: 0.55;
+}
+
+@media (max-width: 920px) {
+  .dialog-content {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-pane {
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}

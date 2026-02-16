@@ -1,0 +1,106 @@
+<section class="new-attendance-dialog">
+  <header class="dialog-header">
+    <div class="header-left">
+      <div class="icon" aria-hidden="true">+</div>
+      <div>
+        <h2>Novo atendimento</h2>
+        <p>Paciente: {{ data.patientName }}</p>
+      </div>
+    </div>
+
+    <button type="button" class="close-btn" (click)="close()" aria-label="Fechar">
+      <svg viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+  </header>
+
+  <section class="dialog-content">
+    <div class="catalog-pane">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M10.5 3a7.5 7.5 0 0 1 5.92 12.1l4.24 4.25-1.42 1.41-4.24-4.24A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"
+            fill="currentColor"
+          />
+        </svg>
+        <input
+          [value]="query()"
+          (input)="setQuery(($any($event.target)).value)"
+          placeholder="Pesquisar no catalogo..."
+        />
+      </div>
+
+      <div class="catalog-scroll">
+        @if (loadingCatalog()) {
+          <p>Carregando catalogo...</p>
+        }
+        @for (section of catalogSections(); track section.id) {
+          <section class="catalog-section">
+            <h3>{{ section.title }}</h3>
+            <div class="cards">
+              @for (item of section.items; track item.id) {
+                <button
+                  type="button"
+                  class="exam-card"
+                  [class.selected]="isSelected(item.id)"
+                  (click)="toggleExam(item.id)"
+                >
+                  <div class="exam-main">
+                    <strong>{{ item.name }}</strong>
+                    <span>{{ formatMoney(item.price) }}</span>
+                  </div>
+                  <span class="exam-action">{{ isSelected(item.id) ? 'x' : '+' }}</span>
+                </button>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </div>
+
+    <aside class="summary-pane">
+      <h3>Exames selecionados ({{ selectedExams().length }})</h3>
+      <ul class="selected-list">
+        @for (exam of selectedExams(); track exam.id) {
+          <li>
+            <span>{{ exam.name }}</span>
+            <button type="button" (click)="removeExam(exam.id)" aria-label="Remover">Remover</button>
+          </li>
+        }
+      </ul>
+
+      <div class="date-block">
+        <h4>Data de realizacao</h4>
+        <div class="date-actions">
+          <button type="button" class="today-btn" (click)="setToday()">Hoje</button>
+          <button type="button" class="schedule-btn">Agendar</button>
+        </div>
+        <input
+          type="date"
+          [value]="selectedDate()"
+          (input)="setDate(($any($event.target)).value)"
+        />
+      </div>
+
+      <footer class="summary-footer">
+        <div class="total">
+          <span>Total estimado</span>
+          <strong>{{ formatMoney(total()) }}</strong>
+        </div>
+        <button
+          type="button"
+          class="confirm-btn"
+          [disabled]="selectedExams().length === 0 || saving()"
+          (click)="confirm()"
+        >
+          @if (saving()) {
+            Salvando...
+          } @else {
+          Confirmar atendimento
+          }
+        </button>
+      </footer>
+    </aside>
+  </section>
+</section>
