@@ -5,7 +5,9 @@ use sqlx::SqlitePool;
 use crate::{
   app::{error::AppError, state::AppState},
   application::patients::{
-    create_patient::CreatePatientUseCase, list_patients::ListPatientsUseCase,
+    create_attendance::CreateAttendanceUseCase, create_patient::CreatePatientUseCase,
+    get_patient_record::GetPatientRecordUseCase, list_exam_catalog::ListExamCatalogUseCase,
+    list_patients::ListPatientsUseCase,
   },
   infra::{
     db::sqlite::{create_sqlite_pool, run_migrations},
@@ -29,11 +31,17 @@ pub async fn compose(db_path: &str) -> Result<AppState, AppError> {
 
   // 4) Use case (application)
   let create_patient_use_case = Arc::new(CreatePatientUseCase::new(repo.clone()));
-  let list_patients_use_case = Arc::new(ListPatientsUseCase::new(repo));
+  let list_patients_use_case = Arc::new(ListPatientsUseCase::new(repo.clone()));
+  let get_patient_record_use_case = Arc::new(GetPatientRecordUseCase::new(repo.clone()));
+  let list_exam_catalog_use_case = Arc::new(ListExamCatalogUseCase::new(repo.clone()));
+  let create_attendance_use_case = Arc::new(CreateAttendanceUseCase::new(repo));
 
   // 5) State
   Ok(AppState {
     create_patient_use_case,
     list_patients_use_case,
+    get_patient_record_use_case,
+    list_exam_catalog_use_case,
+    create_attendance_use_case,
   })
 }
