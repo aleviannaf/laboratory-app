@@ -32,6 +32,33 @@ impl PatientRepository for StubListRepository {
       .cloned()
       .collect())
   }
+
+  async fn get_patient_record(
+    &self,
+    _patient_id: String,
+  ) -> Result<laboratory_app_lib::domain::patients::dto::PatientRecordView, PatientRepositoryError>
+  {
+    unimplemented!()
+  }
+
+  async fn list_exam_catalog(
+    &self,
+  ) -> Result<
+    Vec<laboratory_app_lib::domain::patients::dto::ExamCatalogItemView>,
+    PatientRepositoryError,
+  > {
+    unimplemented!()
+  }
+
+  async fn create_attendance(
+    &self,
+    _input: laboratory_app_lib::domain::patients::dto::CreateAttendanceInput,
+  ) -> Result<
+    laboratory_app_lib::domain::patients::dto::PatientRecordEntryView,
+    PatientRepositoryError,
+  > {
+    unimplemented!()
+  }
 }
 
 fn mk_patient(id: &str, full_name: &str, cpf: &str) -> Patient {
@@ -108,6 +135,35 @@ async fn list_patients_maps_repository_error() {
 
     async fn list(&self, _query: Option<String>) -> Result<Vec<Patient>, PatientRepositoryError> {
       Err(PatientRepositoryError::PersistenceError)
+    }
+
+    async fn get_patient_record(
+      &self,
+      _patient_id: String,
+    ) -> Result<
+      laboratory_app_lib::domain::patients::dto::PatientRecordView,
+      PatientRepositoryError,
+    > {
+      unimplemented!()
+    }
+
+    async fn list_exam_catalog(
+      &self,
+    ) -> Result<
+      Vec<laboratory_app_lib::domain::patients::dto::ExamCatalogItemView>,
+      PatientRepositoryError,
+    > {
+      unimplemented!()
+    }
+
+    async fn create_attendance(
+      &self,
+      _input: laboratory_app_lib::domain::patients::dto::CreateAttendanceInput,
+    ) -> Result<
+      laboratory_app_lib::domain::patients::dto::PatientRecordEntryView,
+      PatientRepositoryError,
+    > {
+      unimplemented!()
     }
   }
 
