@@ -4,14 +4,14 @@
   <header class="dialog__header">
     <div class="dialog__title">
       <span class="dialog__titleIcon" aria-hidden="true">
-        <!-- ícone simples (pode trocar por SVG depois) -->
-        👤➕
+        <!-- icone simples (pode trocar por SVG depois) -->
+        [+]
       </span>
       <h2 class="dialog__titleText">Novo Cadastro de Paciente</h2>
     </div>
 
     <button type="button" class="iconBtn" (click)="close()" aria-label="Fechar modal">
-      ✕
+      X
     </button>
   </header>
 
@@ -19,17 +19,35 @@
     <form class="form" [formGroup]="form" (ngSubmit)="submit()">
       <div class="field col-12">
         <label for="fullName">NOME COMPLETO</label>
-        <input id="fullName" type="text" formControlName="fullName" placeholder="Ex: João Silva Santos" autocomplete="name" />
+        <input id="fullName" type="text" formControlName="fullName" placeholder="Ex: Joao Silva Santos" autocomplete="name" />
       </div>
 
       <div class="field col-6">
         <label for="cpf">CPF</label>
-        <input id="cpf" type="text" formControlName="cpf" placeholder="000.000.000-00" autocomplete="off" inputmode="numeric" />
+        <input
+          id="cpf"
+          type="text"
+          formControlName="cpf"
+          placeholder="000.000.000-00"
+          autocomplete="off"
+          inputmode="numeric"
+          maxlength="14"
+          (input)="onCpfInput()"
+        />
       </div>
 
       <div class="field col-6">
         <label for="birthDate">NASCIMENTO</label>
-        <input id="birthDate" type="text" formControlName="birthDate" placeholder="dd/mm/aaaa" autocomplete="bday" />
+        <input
+          id="birthDate"
+          type="text"
+          formControlName="birthDate"
+          placeholder="dd/mm/aaaa"
+          autocomplete="bday"
+          inputmode="numeric"
+          maxlength="10"
+          (input)="onBirthDateInput()"
+        />
       </div>
 
       <div class="field col-6">
@@ -46,7 +64,7 @@
       </div>
 
       <div class="field col-12">
-        <label for="address">ENDEREÇO COMPLETO</label>
+        <label for="address">ENDERECO COMPLETO</label>
         <div class="inputWithIcon">
           <span class="leftIcon" aria-hidden="true">📍</span>
           <input id="address" type="text" formControlName="address" placeholder="Rua, Número, Bairro, Cidade" autocomplete="street-address" />

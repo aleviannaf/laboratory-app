@@ -98,15 +98,22 @@ function mapStatus(status: string): PatientRecordExamStatus {
 }
 
 function toBrazilianDate(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
+  const raw = String(value ?? '').trim();
+
+  // exam_date is a civil date (date-only). Avoid Date parsing with timezone.
+  const isoDateOnly = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoDateOnly) {
+    const [, year, month, day] = isoDateOnly;
+    return `${day}/${month}/${year}`;
   }
 
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  const isoDateTime = raw.match(/^(\d{4})-(\d{2})-(\d{2})T/);
+  if (isoDateTime) {
+    const [, year, month, day] = isoDateTime;
+    return `${day}/${month}/${year}`;
+  }
+
+  return raw;
 }
 
 function buildEmail(name: string): string {

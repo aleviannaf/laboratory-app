@@ -60,7 +60,7 @@ type SubmitPatientCreateDialogResult = Extract<
 })
 export class PatientsComponent implements OnInit {
 
-  // dependências
+  // dependencias
   private readonly patientService = inject(PatientService);
   private readonly patientsApi = inject(PatientsApiService);
   private readonly toast = inject(ToastService);
@@ -84,7 +84,7 @@ export class PatientsComponent implements OnInit {
   // estados derivados
   readonly hasQuery = computed(() => this.query().trim().length > 0);
   readonly patientsCount = computed(() => this.patients().length);
-  
+
   readonly showEmpty = computed(
   () =>
     this.loadedOnce() &&
@@ -122,13 +122,13 @@ export class PatientsComponent implements OnInit {
         switchMap((q) =>
           this.patientService.listPatients(q ? q : undefined).pipe(
             catchError((e) => {
-              // log (opcional pra debug por enquanto, mas ideal: serviço de log centralizado)
+              // log (opcional pra debug por enquanto, mas ideal: servico de log centralizado)
               console.error('listPatients error', e);
               this.error.set('Erro ao carregar pacientes.');
               return of([] as Patient[]);
             }),
             finalize(() => {
-              this.loadingList.set(false)
+              this.loadingList.set(false);
               this.loadedOnce.set(true);
             })
           )
@@ -230,19 +230,26 @@ export class PatientsComponent implements OnInit {
   }
 }
 
-
 export function mapToCreateInput(
   result: SubmitPatientCreateDialogResult
 ): CreatePatientInput {
   const full_name = String(result.payload.fullName ?? '').trim();
-  const cpf = String(result.payload.cpf ?? '').trim();
-  const birth_date = String(result.payload.birthDate ?? '').trim();
+  const cpf_input = String(result.payload.cpf ?? '').trim();
+  const birth_date_input = String(result.payload.birthDate ?? '').trim();
   const phone = String(result.payload.phone ?? '').trim();
   const address = String(result.payload.address ?? '').trim();
 
   if (!full_name) throw new Error('Nome e obrigatorio.');
+
+  const cpf = normalizeCpf(cpf_input);
   if (!cpf) throw new Error('CPF e obrigatorio.');
-  if (!birth_date) throw new Error('Nascimento e obrigatorio.');
+  if (cpf.length !== 11) throw new Error('CPF invalido. Use 11 digitos.');
+
+  const birth_date = normalizeBirthDateToIso(birth_date_input);
+  if (!birth_date) {
+    throw new Error('Data de nascimento invalida. Use dd/mm/aaaa.');
+  }
+
   if (!phone) throw new Error('Telefone e obrigatorio.');
   if (!address) throw new Error('Endereco e obrigatorio.');
 
@@ -255,6 +262,76 @@ export function mapToCreateInput(
     address,
   };
 }
+
+function normalizeCpf(value: string): string {
+  return value.replace(/\D/g, '');
+}
+
+function normalizeBirthDateToIso(value: string): string | null {
+  const raw = String(value ?? '').trim();
+
+  const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    const year = Number(isoMatch[1]);
+    const month = Number(isoMatch[2]);
+    const day = Number(isoMatch[3]);
+    return isValidDate(day, month, year) ? `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}` : null;
+  }
+
+  const brMatch = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (brMatch) {
+    const day = Number(brMatch[1]);
+    const month = Number(brMatch[2]);
+    const year = Number(brMatch[3]);
+
+    if (!isValidDate(day, month, year)) {
+      return null;
+    }
+
+    return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }
+
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length === 8) {
+    const day = Number(digits.slice(0, 2));
+    const month = Number(digits.slice(2, 4));
+    const year = Number(digits.slice(4));
+
+    if (!isValidDate(day, month, year)) {
+      return null;
+    }
+
+    return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }
+
+  return null;
+}
+
+function isValidDate(day: number, month: number, year: number): boolean {
+  if (!Number.isInteger(day) || !Number.isInteger(month) || !Number.isInteger(year)) {
+    return false;
+  }
+
+  if (year < 1900 || year > 2100) {
+    return false;
+  }
+
+  if (month < 1 || month > 12) {
+    return false;
+  }
+
+  if (day < 1 || day > 31) {
+    return false;
+  }
+
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+}
+
 function normalizeError(e: unknown): string {
   if (typeof e === 'string') return e;
   if (e && typeof e === 'object' && 'message' in e) {
