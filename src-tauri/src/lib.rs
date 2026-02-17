@@ -33,7 +33,9 @@ pub fn run() {
       interface::ipc::patients::list_patients,
       interface::ipc::patient_records::get_patient_record,
       interface::ipc::patient_records::list_exam_catalog,
-      interface::ipc::patient_records::create_attendance
+      interface::ipc::patient_records::create_attendance,
+      interface::ipc::patient_records::list_attendance_queue,
+      interface::ipc::patient_records::complete_attendance
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

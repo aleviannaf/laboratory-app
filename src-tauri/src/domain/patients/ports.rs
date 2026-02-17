@@ -2,6 +2,7 @@ use async_trait::async_trait;
 
 use super::{
   dto::{
+    AttendanceQueueItemView, AttendanceQueueQueryInput, CompleteAttendanceInput,
     CreateAttendanceInput, CreatePatientInput, ExamCatalogItemView, PatientRecordEntryView,
     PatientRecordView,
   },
@@ -22,4 +23,12 @@ pub trait PatientRepository: Send + Sync {
     &self,
     input: CreateAttendanceInput,
   ) -> Result<PatientRecordEntryView, PatientRepositoryError>;
+  async fn list_attendance_queue(
+    &self,
+    input: AttendanceQueueQueryInput,
+  ) -> Result<Vec<AttendanceQueueItemView>, PatientRepositoryError>;
+  async fn complete_attendance(
+    &self,
+    input: CompleteAttendanceInput,
+  ) -> Result<AttendanceQueueItemView, PatientRepositoryError>;
 }

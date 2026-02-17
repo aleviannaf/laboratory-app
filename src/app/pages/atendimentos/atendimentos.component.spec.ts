@@ -5,9 +5,7 @@ import { AtendimentosComponent } from './atendimentos.component';
 import { AttendanceQueueService } from './attendance-queue.service';
 import { AttendanceItem } from './models/attendance-queue.model';
 import { Dialog } from '@angular/cdk/dialog';
-import {
-  ConfirmCompleteDialogComponent,
-} from './components/dialogs/confirm-complete-dialog/confirm-complete-dialog.component';
+import { ConfirmCompleteDialogComponent } from './components/dialogs/confirm-complete-dialog/confirm-complete-dialog.component';
 import { DateFilterDialogComponent } from './components/dialogs/date-filter-dialog/date-filter-dialog.component';
 import { AttendanceDetailsDialogComponent } from './components/dialogs/attendance-details-dialog/attendance-details-dialog.component';
 
@@ -25,7 +23,7 @@ class DialogMock {
 }
 
 class AttendanceQueueServiceMock {
-  private readonly list: readonly AttendanceItem[] = [
+  readonly list: readonly AttendanceItem[] = [
     {
       id: '1',
       patientName: 'Maria',
@@ -47,9 +45,12 @@ class AttendanceQueueServiceMock {
     },
   ];
 
-  getSeed(): readonly AttendanceItem[] {
-    return this.list;
-  }
+  loadQueue = jasmine.createSpy('loadQueue').and.resolveTo(this.list);
+  completeAttendance = jasmine.createSpy('completeAttendance').and.resolveTo({
+    ...this.list[0],
+    status: 'done',
+    completedAt: '2026-02-13T12:00:00',
+  } satisfies AttendanceItem);
 
   filterByDate(items: readonly AttendanceItem[], dateIso: string): readonly AttendanceItem[] {
     return items.filter((item) => item.scheduledAt.startsWith(dateIso));
@@ -73,12 +74,6 @@ class AttendanceQueueServiceMock {
     };
   }
 
-  markAsDone(items: readonly AttendanceItem[], id: string, whenIso: string): readonly AttendanceItem[] {
-    return items.map((item) =>
-      item.id === id ? { ...item, status: 'done', completedAt: whenIso } : item
-    );
-  }
-
   findById(items: readonly AttendanceItem[], id: string): AttendanceItem | undefined {
     return items.find((item) => item.id === id);
   }
@@ -88,6 +83,7 @@ describe('AtendimentosComponent', () => {
   let fixture: ComponentFixture<AtendimentosComponent>;
   let component: AtendimentosComponent;
   let dialog: DialogMock;
+  let queueService: AttendanceQueueServiceMock;
 
   beforeEach(async () => {
     dialog = new DialogMock();
@@ -102,46 +98,67 @@ describe('AtendimentosComponent', () => {
 
     fixture = TestBed.createComponent(AtendimentosComponent);
     component = fixture.componentInstance;
-    component.selectedDate.set('2026-02-13');
-    fixture.detectChanges();
+    queueService = TestBed.inject(AttendanceQueueService) as unknown as AttendanceQueueServiceMock;
   });
 
-  it('changes tab and updates filtered list', () => {
-    expect(component.filteredItems().length).toBe(1);
+  it('loads queue from backend on init', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(queueService.loadQueue).toHaveBeenCalled();
+    expect(component.items().length).toBe(2);
+  });
+
+  it('changes tab without reloading queue', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
     component.onTabChange('completed');
+
+    expect(queueService.loadQueue).toHaveBeenCalledTimes(1);
     expect(component.filteredItems().length).toBe(1);
     expect(component.filteredItems()[0].status).toBe('done');
   });
 
-  it('moves item to completed after confirmation', () => {
+  it('completes item and reloads queue after confirmation', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
     dialog.nextResult = true;
 
     component.onCompleteClick('1');
+    await fixture.whenStable();
 
-    const updated = component.items().find((item) => item.id === '1');
-    expect(updated?.status).toBe('done');
-    expect(updated?.completedAt).toBeTruthy();
+    expect(queueService.completeAttendance).toHaveBeenCalledWith('1');
+    expect(queueService.loadQueue).toHaveBeenCalledTimes(2);
   });
 
-  it('does not change item when completion is cancelled', () => {
+  it('does not complete item when confirmation is cancelled', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
     dialog.nextResult = false;
 
     component.onCompleteClick('1');
+    await fixture.whenStable();
 
-    const item = component.items().find((entry) => entry.id === '1');
-    expect(item?.status).toBe('waiting');
-    expect(item?.completedAt).toBeUndefined();
+    expect(queueService.completeAttendance).not.toHaveBeenCalled();
   });
 
-  it('applies date from date filter dialog', () => {
+  it('applies date from date filter dialog and reloads queue', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
     dialog.nextResult = '2026-02-14';
 
     component.onOtherDatesClick();
+    await fixture.whenStable();
 
     expect(component.selectedDate()).toBe('2026-02-14');
+    expect(queueService.loadQueue).toHaveBeenCalledTimes(2);
   });
 
-  it('opens details dialog for selected item', () => {
+  it('opens details dialog for selected item', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+
     component.onViewClick('1');
 
     expect(dialog.open).toHaveBeenCalledWith(

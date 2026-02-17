@@ -1,8 +1,11 @@
 import { AttendanceQueueService } from './attendance-queue.service';
 import { AttendanceItem } from './models/attendance-queue.model';
+import { PatientRecordApiService } from '../../core/services/patient-record-api.service';
 
 describe('AttendanceQueueService', () => {
   let service: AttendanceQueueService;
+  let api: jasmine.SpyObj<PatientRecordApiService>;
+
   const date = '2026-02-13';
   const otherDate = '2026-02-14';
 
@@ -38,7 +41,57 @@ describe('AttendanceQueueService', () => {
   ];
 
   beforeEach(() => {
-    service = new AttendanceQueueService();
+    api = jasmine.createSpyObj<PatientRecordApiService>('PatientRecordApiService', [
+      'listAttendanceQueue',
+      'completeAttendance',
+    ]);
+    service = new AttendanceQueueService(api);
+  });
+
+  it('loads queue from backend and maps to attendance items', async () => {
+    api.listAttendanceQueue.and.resolveTo([
+      {
+        attendance_id: 'att-1',
+        patient_id: 'pt-1',
+        patient_name: 'Maria',
+        patient_cpf: '12345678900',
+        exam_date: '2026-02-13',
+        status: 'waiting',
+        exam_names: ['Glicose'],
+        updated_at: '2026-02-13T08:00:00',
+      },
+    ]);
+
+    const loaded = await service.loadQueue({
+      date: '2026-02-13',
+      query: 'maria',
+    });
+
+    expect(api.listAttendanceQueue).toHaveBeenCalledWith({
+      date: '2026-02-13',
+      query: 'maria',
+    });
+    expect(loaded.length).toBe(1);
+    expect(loaded[0].patientName).toBe('Maria');
+    expect(loaded[0].status).toBe('waiting');
+  });
+
+  it('maps completeAttendance to done status', async () => {
+    api.completeAttendance.and.resolveTo({
+      attendance_id: 'att-1',
+      patient_id: 'pt-1',
+      patient_name: 'Maria',
+      patient_cpf: '12345678900',
+      exam_date: '2026-02-13',
+      status: 'completed',
+      exam_names: ['Glicose'],
+      updated_at: '2026-02-13T10:00:00',
+    });
+
+    const completed = await service.completeAttendance('att-1');
+
+    expect(api.completeAttendance).toHaveBeenCalledWith({ attendance_id: 'att-1' });
+    expect(completed.status).toBe('done');
   });
 
   it('filters by tab correctly', () => {
@@ -60,17 +113,5 @@ describe('AttendanceQueueService', () => {
     expect(service.filterByQuery(items, 'maria').length).toBe(1);
     expect(service.filterByQuery(items, '#101').length).toBe(1);
     expect(service.filterByQuery(items, 'beta').length).toBe(1);
-  });
-
-  it('markAsDone updates status and completedAt keeping other fields', () => {
-    const when = `${date}T12:30:00`;
-    const updated = service.markAsDone(items, '1', when);
-    const done = updated.find((item) => item.id === '1');
-    const untouched = updated.find((item) => item.id === '3');
-
-    expect(done?.status).toBe('done');
-    expect(done?.completedAt).toBe(when);
-    expect(done?.patientName).toBe('Maria');
-    expect(untouched?.status).toBe('waiting');
   });
 });

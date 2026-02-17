@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  OnInit,
   computed,
   inject,
   signal,
@@ -43,15 +44,18 @@ import {
   styleUrl: './atendimentos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AtendimentosComponent {
+export class AtendimentosComponent implements OnInit {
   private readonly queueService = inject(AttendanceQueueService);
   private readonly dialog = inject(Dialog);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly items = signal<readonly AttendanceItem[]>(this.queueService.getSeed());
+  readonly items = signal<readonly AttendanceItem[]>([]);
   readonly selectedTab = signal<AttendanceTab>('scheduled');
   readonly query = signal('');
   readonly selectedDate = signal(toIsoDate(new Date()));
+  readonly loading = signal(false);
+  readonly loadedOnce = signal(false);
+  readonly error = signal<string | null>(null);
 
   readonly selectedDateLabel = computed(() => formatDateLabel(this.selectedDate()));
   readonly counts = computed(() =>
@@ -68,26 +72,32 @@ export class AtendimentosComponent {
     this.queueService.filterByQuery(this.tabItems(), this.query())
   );
 
-  readonly emptyTitle = computed(() =>
-    this.query().trim()
-      ? 'Nenhum atendimento encontrado.'
-      : this.selectedTab() === 'scheduled'
+  readonly emptyTitle = computed(() => {
+    if (this.loading()) return 'Carregando atendimentos...';
+    if (this.error()) return 'Nao foi possivel carregar atendimentos.';
+    if (this.query().trim()) return 'Nenhum atendimento encontrado.';
+    return this.selectedTab() === 'scheduled'
       ? 'Nenhum atendimento agendado.'
-      : 'Nenhum atendimento concluido.'
-  );
+      : 'Nenhum atendimento concluido.';
+  });
 
-  readonly emptySubtitle = computed(() =>
-    this.query().trim()
-      ? 'Tente ajustar a busca por paciente, protocolo ou exame.'
-      : 'Selecione outra data para visualizar mais resultados.'
-  );
+  readonly emptySubtitle = computed(() => {
+    if (this.error()) return this.error() ?? 'Erro inesperado.';
+    if (this.query().trim()) return 'Tente ajustar a busca por paciente, protocolo ou exame.';
+    return 'Selecione outra data para visualizar mais resultados.';
+  });
+
+  ngOnInit(): void {
+    void this.reloadQueue();
+  }
 
   onTabChange(tab: AttendanceTab): void {
     this.selectedTab.set(tab);
   }
 
-  onQueryChange(query: string): void {
+  async onQueryChange(query: string): Promise<void> {
     this.query.set(query);
+    await this.reloadQueue();
   }
 
   onOtherDatesClick(): void {
@@ -105,7 +115,10 @@ export class AtendimentosComponent {
         takeUntilDestroyed(this.destroyRef),
         filter((date): date is string => !!date)
       )
-      .subscribe((date) => this.selectedDate.set(date));
+      .subscribe((date) => {
+        this.selectedDate.set(date);
+        void this.reloadQueue();
+      });
   }
 
   onCompleteClick(id: string): void {
@@ -124,8 +137,7 @@ export class AtendimentosComponent {
     ref.closed
       .pipe(takeUntilDestroyed(this.destroyRef), filter((confirmed) => !!confirmed))
       .subscribe(() => {
-        const now = new Date().toISOString().slice(0, 19);
-        this.items.set(this.queueService.markAsDone(this.items(), id, now));
+        void this.completeAttendance(id);
       });
   }
 
@@ -146,6 +158,50 @@ export class AtendimentosComponent {
       panelClass: 'app-dialog-panel',
     });
   }
+
+  private async reloadQueue(): Promise<void> {
+    this.loading.set(true);
+    this.error.set(null);
+    try {
+      const items = await this.queueService.loadQueue({
+        date: this.selectedDate(),
+        query: this.query(),
+      });
+      this.items.set(items);
+    } catch (error) {
+      this.error.set(normalizeError(error));
+      this.items.set([]);
+    } finally {
+      this.loading.set(false);
+      this.loadedOnce.set(true);
+    }
+  }
+
+  private async completeAttendance(id: string): Promise<void> {
+    this.loading.set(true);
+    this.error.set(null);
+    try {
+      await this.queueService.completeAttendance(id);
+      await this.reloadQueue();
+    } catch (error) {
+      this.error.set(normalizeError(error));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+}
+
+function normalizeError(error: unknown): string {
+  if (typeof error === 'string' && error.trim()) {
+    return error;
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === 'string' && message.trim()) {
+      return message;
+    }
+  }
+  return 'Erro ao carregar atendimentos.';
 }
 
 function formatDateLabel(dateIso: string): string {

@@ -45,6 +45,23 @@ impl PatientRepository for StubGetRecordRepository {
   ) -> Result<PatientRecordEntryView, PatientRepositoryError> {
     unimplemented!()
   }
+
+  async fn list_attendance_queue(
+    &self,
+    _input: laboratory_app_lib::domain::patients::dto::AttendanceQueueQueryInput,
+  ) -> Result<
+    Vec<laboratory_app_lib::domain::patients::dto::AttendanceQueueItemView>,
+    PatientRepositoryError,
+  > {
+    unimplemented!()
+  }
+
+  async fn complete_attendance(
+    &self,
+    _input: laboratory_app_lib::domain::patients::dto::CompleteAttendanceInput,
+  ) -> Result<laboratory_app_lib::domain::patients::dto::AttendanceQueueItemView, PatientRepositoryError> {
+    unimplemented!()
+  }
 }
 
 #[tokio::test]

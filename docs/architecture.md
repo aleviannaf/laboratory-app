@@ -139,3 +139,17 @@ Examples:
 - Keep commit messages in English.
 - Keep responsibilities separated by layer/component.
 - Prefer explicit mapping and error translation at boundaries.
+
+## How To Build A New Feature
+
+For a complete step-by-step guide (backend + frontend + tests + migrations + DoD), use:
+- `docs/feature-playbook.md`
+
+Quick path:
+1. Domain (`src-tauri/src/domain/<feature>`)
+2. Use cases (`src-tauri/src/application/<feature>`)
+3. SQLx repository (`src-tauri/src/infra/repositories`)
+4. IPC commands (`src-tauri/src/interface/ipc`)
+5. Composition + state (`src-tauri/src/app/compose.rs`, `src-tauri/src/app/state.rs`, `src-tauri/src/lib.rs`)
+6. Frontend bridge/service/components (`src/app/core/services`, `src/app/pages/<feature>`)
+7. Tests + docs update

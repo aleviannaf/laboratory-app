@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 
 import {
+  AttendanceQueueItemDto,
+  PatientRecordApiService,
+} from '../../core/services/patient-record-api.service';
+import {
   AttendanceItem,
   AttendanceTab,
   AttendanceTabCounts,
@@ -8,10 +12,25 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class AttendanceQueueService {
-  private readonly seed: readonly AttendanceItem[] = buildSeed();
+  constructor(private readonly api: PatientRecordApiService) {}
 
-  getSeed(): readonly AttendanceItem[] {
-    return this.seed;
+  async loadQueue(params: {
+    date?: string;
+    query?: string;
+  }): Promise<readonly AttendanceItem[]> {
+    const query = params.query?.trim() || undefined;
+
+    const list = await this.api.listAttendanceQueue({
+      date: params.date,
+      query,
+    });
+
+    return list.map(mapQueueItemToModel);
+  }
+
+  async completeAttendance(id: string): Promise<AttendanceItem> {
+    const updated = await this.api.completeAttendance({ attendance_id: id });
+    return mapQueueItemToModel(updated);
   }
 
   filterByDate(items: readonly AttendanceItem[], dateIso: string): readonly AttendanceItem[] {
@@ -42,160 +61,35 @@ export class AttendanceQueueService {
     };
   }
 
-  markAsDone(
-    items: readonly AttendanceItem[],
-    id: string,
-    whenIso: string
-  ): readonly AttendanceItem[] {
-    return items.map((item) => {
-      if (item.id !== id || item.status === 'done') return item;
-      return {
-        ...item,
-        status: 'done',
-        completedAt: whenIso,
-      };
-    });
-  }
-
   findById(items: readonly AttendanceItem[], id: string): AttendanceItem | undefined {
     return items.find((item) => item.id === id);
   }
 }
 
+function mapQueueItemToModel(item: AttendanceQueueItemDto): AttendanceItem {
+  return {
+    id: item.attendance_id,
+    patientName: item.patient_name,
+    protocol: item.attendance_id,
+    exams: item.exam_names,
+    urgency: 'normal',
+    status: item.status === 'completed' ? 'done' : 'waiting',
+    scheduledAt: ensureDateTime(item.exam_date),
+    completedAt: item.status === 'completed' ? item.updated_at : undefined,
+  };
+}
+
+function ensureDateTime(dateOrDateTime: string): string {
+  const value = String(dateOrDateTime ?? '').trim();
+  if (!value) {
+    return value;
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return `${value}T00:00:00`;
+  }
+  return value;
+}
+
 function toDateOnly(isoDateTime: string): string {
   return isoDateTime.slice(0, 10);
-}
-
-function buildSeed(): readonly AttendanceItem[] {
-  const now = new Date();
-  const today = toIsoDate(now);
-  const tomorrow = toIsoDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
-
-  return [
-    {
-      id: 'att-1',
-      patientName: 'Danildo Mendes Gato',
-      protocol: '#50101',
-      exams: ['GLICOSE', 'COLESTEROL'],
-      urgency: 'normal',
-      status: 'waiting',
-      scheduledAt: `${today}T08:10:00`,
-    },
-    {
-      id: 'att-2',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-    {
-      id: 'att-3',
-      patientName: 'Willian Batista Guerreiro',
-      protocol: '#50100',
-      exams: ['HEMOGRAMA COMPLETO'],
-      urgency: 'urgent',
-      status: 'done',
-      scheduledAt: `${today}T07:40:00`,
-      completedAt: `${today}T10:30:00`,
-    },
-    {
-      id: 'att-4',
-      patientName: 'Maria Souza',
-      protocol: '#50120',
-      exams: ['UREIA', 'CREATININA'],
-      urgency: 'normal',
-      status: 'waiting',
-      scheduledAt: `${tomorrow}T11:00:00`,
-    },
-    {
-      id: 'att-5',
-      patientName: 'Maria Souza',
-      protocol: '#50121',
-      exams: ['UREIA', 'CREATININA', 'HEMOGRAMA COMPLETO', 'BETA HCG', 'GLICOSE', 'COLESTEROL', 'EXAME DE COVID'],
-      urgency: 'normal',
-      status: 'waiting',
-      scheduledAt: `${tomorrow}T12:00:00`,
-    },
-     {
-      id: 'att-6',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG', 'HEMOGRAMA COMPLETO', 'UREIA', 'CREATININA', 'GLICOSE', 'COLESTEROL', 'EXAME DE COVID'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-     {
-      id: 'att-7',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-     {
-      id: 'att-8',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-     {
-      id: 'att-9',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG', 'HEMOGRAMA COMPLETO', 'UREIA', 'CREATININA', 'GLICOSE', 'COLESTEROL', 'EXAME DE COVID'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-     {
-      id: 'att-10',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-     {
-      id: 'att-11',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-     {
-      id: 'att-12',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-     {
-      id: 'att-13',
-      patientName: 'Glenda do Carmo Martins Freire',
-      protocol: '#50102',
-      exams: ['BETA HCG'],
-      urgency: 'emergency',
-      status: 'waiting',
-      scheduledAt: `${today}T09:20:00`,
-    },
-  ];
-}
-
-function toIsoDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
 }

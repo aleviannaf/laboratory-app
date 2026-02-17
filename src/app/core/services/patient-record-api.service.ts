@@ -61,6 +61,21 @@ export interface PatientRecordDto {
   entries: PatientRecordEntryDto[];
 }
 
+export interface AttendanceQueueItemDto {
+  attendance_id: string;
+  patient_id: string;
+  patient_name: string;
+  patient_cpf: string;
+  exam_date: string;
+  status: string;
+  exam_names: string[];
+  updated_at: string;
+}
+
+export interface CompleteAttendanceInputDto {
+  attendance_id: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PatientRecordApiService {
   getPatientRecord(patientId: string): Promise<PatientRecordDto> {
@@ -73,5 +88,21 @@ export class PatientRecordApiService {
 
   createAttendance(input: CreateAttendanceInputDto): Promise<PatientRecordEntryDto> {
     return invoke<PatientRecordEntryDto>('create_attendance', { input });
+  }
+
+  listAttendanceQueue(params?: {
+    date?: string;
+    status?: 'waiting' | 'completed';
+    query?: string;
+  }): Promise<AttendanceQueueItemDto[]> {
+    return invoke<AttendanceQueueItemDto[]>('list_attendance_queue', {
+      date: params?.date,
+      status: params?.status,
+      query: params?.query,
+    });
+  }
+
+  completeAttendance(input: CompleteAttendanceInputDto): Promise<AttendanceQueueItemDto> {
+    return invoke<AttendanceQueueItemDto>('complete_attendance', { input });
   }
 }

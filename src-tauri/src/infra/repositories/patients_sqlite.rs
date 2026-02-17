@@ -1,11 +1,12 @@
 use async_trait::async_trait;
 use std::collections::HashMap;
-use sqlx::{sqlite::SqliteRow, Row, SqlitePool};
+use sqlx::{sqlite::SqliteRow, QueryBuilder, Row, Sqlite, SqlitePool};
 
 use crate::domain::patients::{
   dto::{
-    CreateAttendanceInput, ExamCatalogItemView, PatientRecordEntryView, PatientRecordExamItemView,
-    PatientRecordView, PatientView, CreatePatientInput,
+    AttendanceQueueItemView, AttendanceQueueQueryInput, CompleteAttendanceInput, CreateAttendanceInput,
+    CreatePatientInput, ExamCatalogItemView, PatientRecordEntryView, PatientRecordExamItemView,
+    PatientRecordView, PatientView,
   },
   entity::Patient,
   errors::PatientRepositoryError,
@@ -19,6 +20,66 @@ pub struct PatientsSqliteRepository {
 impl PatientsSqliteRepository {
   pub fn new(pool: SqlitePool) -> Self {
     Self { pool }
+  }
+
+  async fn get_attendance_by_id(
+    &self,
+    attendance_id: &str,
+  ) -> Result<AttendanceQueueItemView, PatientRepositoryError> {
+    let rows = sqlx::query(
+      r#"
+      SELECT
+        e.id AS attendance_id,
+        e.patient_id AS patient_id,
+        p.full_name AS patient_name,
+        p.cpf AS patient_cpf,
+        e.exam_date AS exam_date,
+        e.status AS status,
+        e.updated_at AS updated_at,
+        ei.name AS exam_name
+      FROM exams e
+      JOIN patients p ON p.id = e.patient_id
+      LEFT JOIN exam_items ei ON ei.exam_id = e.id
+      WHERE e.id = ?1
+      ORDER BY ei.created_at ASC
+      "#,
+    )
+    .bind(attendance_id)
+    .fetch_all(&self.pool)
+    .await
+    .map_err(map_sqlx_error)?;
+
+    if rows.is_empty() {
+      return Err(PatientRepositoryError::NotFound);
+    }
+
+    let first = &rows[0];
+    let attendance_id = first.get::<String, _>("attendance_id");
+    let patient_id = first.get::<String, _>("patient_id");
+    let patient_name = first.get::<String, _>("patient_name");
+    let patient_cpf = first.get::<String, _>("patient_cpf");
+    let exam_date = first.get::<String, _>("exam_date");
+    let status = first.get::<String, _>("status");
+    let updated_at = first.get::<String, _>("updated_at");
+    let mut exam_names: Vec<String> = Vec::new();
+    for row in rows {
+      if let Ok(exam_name) = row.try_get::<String, _>("exam_name") {
+        if !exam_names.iter().any(|value| value == &exam_name) {
+          exam_names.push(exam_name);
+        }
+      }
+    }
+
+    Ok(AttendanceQueueItemView {
+      attendance_id,
+      patient_id,
+      patient_name,
+      patient_cpf,
+      exam_date,
+      status,
+      exam_names,
+      updated_at,
+    })
   }
 }
 
@@ -342,6 +403,126 @@ impl PatientRepository for PatientsSqliteRepository {
       requester_name,
       items,
     })
+  }
+
+  async fn list_attendance_queue(
+    &self,
+    input: AttendanceQueueQueryInput,
+  ) -> Result<Vec<AttendanceQueueItemView>, PatientRepositoryError> {
+    let mut qb = QueryBuilder::<Sqlite>::new(
+      r#"
+      SELECT
+        e.id AS attendance_id,
+        e.patient_id AS patient_id,
+        p.full_name AS patient_name,
+        p.cpf AS patient_cpf,
+        e.exam_date AS exam_date,
+        e.status AS status,
+        e.updated_at AS updated_at,
+        ei.name AS exam_name
+      FROM exams e
+      JOIN patients p ON p.id = e.patient_id
+      LEFT JOIN exam_items ei ON ei.exam_id = e.id
+      WHERE 1 = 1
+      "#,
+    );
+
+    if let Some(date) = input.date {
+      let date = date.trim().to_string();
+      if !date.is_empty() {
+        qb.push(" AND e.exam_date = ");
+        qb.push_bind(date);
+      }
+    }
+
+    if let Some(status) = input.status {
+      let status = status.trim().to_string();
+      if !status.is_empty() {
+        qb.push(" AND e.status = ");
+        qb.push_bind(status);
+      }
+    }
+
+    if let Some(query) = input.query {
+      let query = query.trim().to_string();
+      if !query.is_empty() {
+        let like = format!("%{}%", query.to_lowercase());
+        qb.push(
+          " AND (lower(p.full_name) LIKE ",
+        );
+        qb.push_bind(like.clone());
+        qb.push(" OR p.cpf LIKE ");
+        qb.push_bind(like.clone());
+        qb.push(" OR lower(e.id) LIKE ");
+        qb.push_bind(like.clone());
+        qb.push(" OR lower(coalesce(ei.name, '')) LIKE ");
+        qb.push_bind(like);
+        qb.push(")");
+      }
+    }
+
+    qb.push(" ORDER BY e.exam_date DESC, e.created_at DESC, ei.created_at ASC");
+
+    let rows = qb
+      .build()
+      .fetch_all(&self.pool)
+      .await
+      .map_err(map_sqlx_error)?;
+
+    let mut entries: Vec<AttendanceQueueItemView> = Vec::new();
+    let mut index_by_attendance_id: HashMap<String, usize> = HashMap::new();
+
+    for row in rows {
+      let attendance_id = row.get::<String, _>("attendance_id");
+      let idx = if let Some(existing_idx) = index_by_attendance_id.get(&attendance_id) {
+        *existing_idx
+      } else {
+        let created_idx = entries.len();
+        index_by_attendance_id.insert(attendance_id.clone(), created_idx);
+        entries.push(AttendanceQueueItemView {
+          attendance_id,
+          patient_id: row.get::<String, _>("patient_id"),
+          patient_name: row.get::<String, _>("patient_name"),
+          patient_cpf: row.get::<String, _>("patient_cpf"),
+          exam_date: row.get::<String, _>("exam_date"),
+          status: row.get::<String, _>("status"),
+          exam_names: Vec::new(),
+          updated_at: row.get::<String, _>("updated_at"),
+        });
+        created_idx
+      };
+
+      if let Ok(exam_name) = row.try_get::<String, _>("exam_name") {
+        if !entries[idx].exam_names.iter().any(|value| value == &exam_name) {
+          entries[idx].exam_names.push(exam_name);
+        }
+      }
+    }
+
+    Ok(entries)
+  }
+
+  async fn complete_attendance(
+    &self,
+    input: CompleteAttendanceInput,
+  ) -> Result<AttendanceQueueItemView, PatientRepositoryError> {
+    let updated = sqlx::query(
+      r#"
+      UPDATE exams
+      SET status = 'completed', updated_at = datetime('now')
+      WHERE id = ?1
+      "#,
+    )
+    .bind(&input.attendance_id)
+    .execute(&self.pool)
+    .await
+    .map_err(map_sqlx_error)?;
+
+    if updated.rows_affected() == 0 {
+      return Err(PatientRepositoryError::NotFound);
+    }
+
+    self.get_attendance_by_id(&input.attendance_id).await
   }
 }
 

@@ -5,8 +5,9 @@ use sqlx::SqlitePool;
 use crate::{
   app::{error::AppError, state::AppState},
   application::patients::{
-    create_attendance::CreateAttendanceUseCase, create_patient::CreatePatientUseCase,
-    get_patient_record::GetPatientRecordUseCase, list_exam_catalog::ListExamCatalogUseCase,
+    complete_attendance::CompleteAttendanceUseCase, create_attendance::CreateAttendanceUseCase,
+    create_patient::CreatePatientUseCase, get_patient_record::GetPatientRecordUseCase,
+    list_attendance_queue::ListAttendanceQueueUseCase, list_exam_catalog::ListExamCatalogUseCase,
     list_patients::ListPatientsUseCase,
   },
   infra::{
@@ -34,7 +35,9 @@ pub async fn compose(db_path: &str) -> Result<AppState, AppError> {
   let list_patients_use_case = Arc::new(ListPatientsUseCase::new(repo.clone()));
   let get_patient_record_use_case = Arc::new(GetPatientRecordUseCase::new(repo.clone()));
   let list_exam_catalog_use_case = Arc::new(ListExamCatalogUseCase::new(repo.clone()));
-  let create_attendance_use_case = Arc::new(CreateAttendanceUseCase::new(repo));
+  let create_attendance_use_case = Arc::new(CreateAttendanceUseCase::new(repo.clone()));
+  let list_attendance_queue_use_case = Arc::new(ListAttendanceQueueUseCase::new(repo.clone()));
+  let complete_attendance_use_case = Arc::new(CompleteAttendanceUseCase::new(repo));
 
   // 5) State
   Ok(AppState {
@@ -43,5 +46,7 @@ pub async fn compose(db_path: &str) -> Result<AppState, AppError> {
     get_patient_record_use_case,
     list_exam_catalog_use_case,
     create_attendance_use_case,
+    list_attendance_queue_use_case,
+    complete_attendance_use_case,
   })
 }

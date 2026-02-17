@@ -36,6 +36,30 @@ pub struct CreateAttendanceInput {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AttendanceQueueQueryInput {
+  pub date: Option<String>,
+  pub status: Option<String>,
+  pub query: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AttendanceQueueItemView {
+  pub attendance_id: String,
+  pub patient_id: String,
+  pub patient_name: String,
+  pub patient_cpf: String,
+  pub exam_date: String,
+  pub status: String,
+  pub exam_names: Vec<String>,
+  pub updated_at: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompleteAttendanceInput {
+  pub attendance_id: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateAttendanceItemInput {
   pub name: String,
   pub unit: Option<String>,
